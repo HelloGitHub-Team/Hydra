@@ -1,0 +1,9 @@
+weixin:
+  account: GitHub
+  token: xxxxx
+
+db_url: mysql+pymysql://root:@127.0.0.1:3306/xxxx
+
+sentry:
+  dsn: xxxx
+  traces_sample_rate: 1.0

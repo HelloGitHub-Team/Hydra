@@ -11,6 +11,9 @@ url = "https://mirrors.aliyun.com/pypi/simple"
 [tool.poetry.dependencies]
 python = "^3.7.5"
 requests = "^2.25.1"
+sqlalchemy = "^1.3.22"
+pymysql = "^1.0.2"
+PyYaml = "^5.3.1"
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.770"
