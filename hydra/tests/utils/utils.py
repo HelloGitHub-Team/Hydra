@@ -9,7 +9,8 @@ import datetime
 import random
 import string
 
-DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+DATE_FORMAT = "%Y-%m-%d"
+TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 def random_lower_string(k: int = 32) -> str:
@@ -24,6 +25,10 @@ def random_bigint(k: int = 1) -> int:
     return random.randrange(10 ** k)
 
 
+def random_float(k: int = 1) -> float:
+    return random.random() * (10 ** k)
+
+
 def random_url() -> str:
     return (
         f"https://{random_lower_string()}.com/"
@@ -32,6 +37,10 @@ def random_url() -> str:
 
 
 def random_datetime_str() -> str:
+    return datetime.datetime.now().strftime(TIME_FORMAT)
+
+
+def random_date_str() -> str:
     return datetime.datetime.now().strftime(DATE_FORMAT)
 
 

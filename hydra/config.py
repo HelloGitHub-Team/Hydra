@@ -17,6 +17,9 @@ class Config(object):
     filename = f".{run_mode}_env.yaml"
     filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), filename)
 
+    platform = {
+        "wechat": {"id": 1, "name": "wechat"},
+    }
     with open(filepath, "r", encoding="utf8") as f:
         conf = yaml.load(f, Loader=yaml.FullLoader)
 
@@ -32,4 +35,4 @@ class Config(object):
 
     @classmethod
     def wechat(cls) -> tuple:
-        return cls.conf["wechat"]["account"], cls.conf["wechat"]["token"]
+        return "wechat", cls.conf["wechat"]["account"], cls.conf["wechat"]["token"]

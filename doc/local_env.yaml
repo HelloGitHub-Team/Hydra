@@ -1,0 +1,9 @@
+wechat:
+  account: xxx
+  token: xxx
+
+db_url: mysql+pymysql://root:@127.0.0.1:3306/xx
+
+sentry:
+  dsn: https://xxx.ingest.sentry.io/5xx
+  traces_sample_rate: 1.0

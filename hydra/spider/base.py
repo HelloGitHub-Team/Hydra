@@ -75,7 +75,7 @@ class BaseSpider(object):
     def _start(self) -> None:
         pass
 
-    def start(self) -> bool:
+    def start(self) -> None:
         try:
             s_time = time.time()
             self._start()
@@ -85,8 +85,6 @@ class BaseSpider(object):
                     self.name, round((e_time - s_time), 2)
                 )
             )
-            return True
         except Exception as e:
             self.log.exception(e)
             self.log.error("{} spider error. {}".format(self.name, e))
-            return False

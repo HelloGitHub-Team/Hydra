@@ -12,7 +12,7 @@
 
 ## 一、运行项目
 
-配置文件：`.local_env.yaml`
+创建配置文件：[.local_env.yaml](/doc/local_env.yaml)
 
 1. 安装 pyenv：`pip install pyenv`
 2. 安装并切换本地 Python 版本：`pyenv local 3.7.5`

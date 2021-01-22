@@ -7,15 +7,28 @@
 #   Desc    :   操作数据库
 from sqlalchemy.orm import Session
 
-from hydra.db.model import Data
+from hydra.db.model import Account, Content
 
 
-def upinsert_article(db: Session, kwargs: dict) -> Data:
-    article = db.query(Data).filter_by(source_id=kwargs["source_id"]).first()
-    if article:
-        db.query(Data).filter_by(source_id=kwargs["source_id"]).update(kwargs)
+def upinsert_content(db: Session, kwargs: dict) -> Content:
+    content = db.query(Content).filter_by(source_id=kwargs["source_id"]).first()
+    if content:
+        db.query(Content).filter_by(source_id=kwargs["source_id"]).update(kwargs)
     else:
-        article = Data(**kwargs)
-        db.add(article)
+        content = Content(**kwargs)
+        db.add(content)
     db.commit()
-    return article
+    return content
+
+
+def insert_account(db: Session, kwargs: dict) -> Account:
+    account = (
+        db.query(Account)
+        .filter_by(platform=kwargs["platform"], update_date=kwargs["update_date"])
+        .first()
+    )
+    if not account:
+        account = Account(**kwargs)
+        db.add(account)
+    db.commit()
+    return account
