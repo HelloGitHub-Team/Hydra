@@ -13,11 +13,11 @@ from sqlalchemy.types import DateTime, Integer, String
 from hydra.db.base import Base, engine
 
 
-class Article(Base):
-    __tablename__ = "hydra_article"
+class Data(Base):
+    __tablename__ = "hydra_data"
 
-    url = Column(String(255))  # 文章地址
-    title = Column(String(255))  # 标题
+    url = Column(String(255))  # 内容地址
+    summary = Column(String(255))  # 标题 or 短内容 or 描述（统称为摘要）
     is_original = Column(Integer, default=0)  # 是否为原创：1 为原创
     is_head = Column(Integer, default=0)  # 是否为头条：1 为头条
     clicks_count = Column(Integer)  # 阅读数
@@ -25,7 +25,9 @@ class Article(Base):
     share_count = Column(Integer)  # 分享数
     like_count = Column(Integer)  # 喜欢数
     comment_count = Column(Integer)  # 评论数
-    source_id = Column(Integer)  # 来源 ID
+    source_id = Column(String(255))  # 对应平台上的唯一 ID
+    platform = Column(Integer)  # 平台 ID
+    content_type = Column(Integer)  # 内容类别：文章、微内容、视频
 
     public_time = Column(
         DateTime, default=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")

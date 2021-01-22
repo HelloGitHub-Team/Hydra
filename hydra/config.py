@@ -21,15 +21,15 @@ class Config(object):
         conf = yaml.load(f, Loader=yaml.FullLoader)
 
     @classmethod
-    def sentry_config(cls):
+    def sentry_config(cls) -> dict:
         config = cls.conf["sentry"]
         config["environment"] = cls.run_mode
         return config
 
     @classmethod
-    def database_url(cls):
+    def database_url(cls) -> str:
         return cls.conf["db_url"]
 
     @classmethod
-    def weixin(cls):
-        return cls.conf["weixin"]["account"], cls.conf["weixin"]["token"]
+    def wechat(cls) -> tuple:
+        return cls.conf["wechat"]["account"], cls.conf["wechat"]["token"]

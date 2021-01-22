@@ -7,15 +7,15 @@
 #   Desc    :   操作数据库
 from sqlalchemy.orm import Session
 
-from hydra.db.model import Article
+from hydra.db.model import Data
 
 
-def upinsert_article(db: Session, kwargs: dict):
-    article = db.query(Article).filter_by(url=kwargs["url"]).first()
+def upinsert_article(db: Session, kwargs: dict) -> Data:
+    article = db.query(Data).filter_by(source_id=kwargs["source_id"]).first()
     if article:
-        db.query(Article).filter_by(url=kwargs["url"]).update(kwargs)
+        db.query(Data).filter_by(source_id=kwargs["source_id"]).update(kwargs)
     else:
-        article = Article(**kwargs)
+        article = Data(**kwargs)
         db.add(article)
     db.commit()
     return article

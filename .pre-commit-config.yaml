@@ -1,0 +1,21 @@
+repos:
+  - repo: local
+    hooks:
+      - id: lint
+        name: lint
+        stages: [commit]
+        language: system
+        entry: poetry run sh shell/lint.sh
+        types: [python]
+      - id: format
+        name: format
+        stages: [commit]
+        language: system
+        entry: poetry run sh shell/format.sh
+        types: [python]
+      - id: pytest-cov
+        name: pytest-cov
+        stages: [commit]
+        language: system
+        entry: poetry run pytest hydra/tests --cov-fail-under=90
+        types: [python]

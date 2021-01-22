@@ -4,22 +4,23 @@
 #   Author  :   XueWeiHan
 #   E-mail  :   595666367@qq.com
 #   Date    :   2021-01-05 21:47
-#   Desc    :   基于新榜的公众号文章阅读数监控
+#   Desc    :   公众号平台
 import datetime
 import hashlib
 from random import Random
+from typing import Any, Dict, List
 
-from hydra import BaseSpider
 from hydra.config import Config
 from hydra.db.base import get_db
 from hydra.db.curd import upinsert_article
+from hydra.spider.base import BaseSpider
 
 
-class Weixin(BaseSpider):
-    def __init__(self):
-        super(Weixin, self).__init__()
-        self.source_id = 1
-        self.account, self.token = Config.weixin()
+class WeChat(BaseSpider):
+    def __init__(self) -> None:
+        super(WeChat, self).__init__()
+        self.platform = 1
+        self.account, self.token = Config.wechat()
 
     @staticmethod
     def random_str(random_len: int = 9) -> str:
@@ -60,6 +61,9 @@ class Weixin(BaseSpider):
         params["xyz"] = xyz
         return params
 
+    def get_account_info(self) -> dict:
+        pass
+
     def get_articles_list(self) -> list:
         """
         获取公众号文章的数据
@@ -78,7 +82,7 @@ class Weixin(BaseSpider):
         requests_path = "/xdnphb/detail/v1/rank/article/lists"
 
         url = "https://www.newrank.cn" + requests_path
-
+        method = "POST"
         headers = {
             "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0_1)"
             "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -88,48 +92,41 @@ class Weixin(BaseSpider):
         cookies = {"token": self.token}
         params = self.generate_params(requests_path, {"account": self.account})
         response = self.request_data(
-            url=url, method="POST", params=params, headers=headers, cookies=cookies
+            url=url, method=method, params=params, headers=headers, cookies=cookies
         )
-        articles_result = []
-        try:
-            resp_dict = response.json()
-            if not resp_dict["success"]:
-                raise Exception
-            get_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            articles_list = resp_dict["value"]["articles"]
-            for day_articles in articles_list:
-                for article in day_articles:
-                    articles_result.append(
-                        {
-                            "source_id": self.source_id,
-                            "clicks_count": article.get("clicksCount", -1),
-                            "share_count": article.get("likeCount", -1),
-                            # 在看相当于分享
-                            "is_original": article.get("originalFlag", 0),
-                            "is_head": int(article.get("orderNum") == 0),
-                            "public_time": article.get("publicTime"),
-                            "title": article.get("title"),
-                            "url": article.get("url"),
-                            "update_time": article.get("updateTime"),
-                            "get_time": get_time,
-                        }
-                    )
-            self.log.info("Get {} article data.".format(len(articles_result)))
-        except Exception as e:
-            self.log.error("Request {} error: {}".format(url, e))
-        finally:
+        articles_result: List[Dict[Any, Any]] = []
+        if response is None:
             return articles_result
+        resp_dict = response.json()
+        if not resp_dict["success"]:
+            self.log.error(f"{method} {url} :No Data.")
+            raise Exception
+        get_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        articles_list = resp_dict["value"]["articles"]
+        for day_articles in articles_list:
+            for article in day_articles:
+                articles_result.append(
+                    {
+                        "content_type": 1,
+                        "platform": self.platform,
+                        "source_id": article.get("uuid"),
+                        "clicks_count": article.get("clicksCount", -1),
+                        "share_count": article.get("likeCount", -1),
+                        # 在看相当于分享
+                        "is_original": article.get("originalFlag", 0),
+                        "is_head": int(article.get("orderNum") == 0),
+                        "summary": article.get("title"),
+                        "url": article.get("url"),
+                        "public_time": article.get("publicTime"),
+                        "update_time": article.get("updateTime"),
+                        "get_time": get_time,
+                    }
+                )
+        self.log.info(f"Download {len(articles_result)} article data.")
+        return articles_result
 
-    def _start(self):
+    def _start(self) -> None:
         articles_list = self.get_articles_list()
         with get_db() as db:
             for article in articles_list:
-                try:
-                    upinsert_article(db, article)
-                except Exception as e:
-                    self.log.error(f"Save to mysql failed! error msg:{e}")
-
-
-if __name__ == "__main__":
-    w = Weixin()
-    w.start()
+                upinsert_article(db, article)

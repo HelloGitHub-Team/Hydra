@@ -24,7 +24,7 @@ def random_bigint(k: int = 1) -> int:
     return random.randrange(10 ** k)
 
 
-def random_url() -> string:
+def random_url() -> str:
     return (
         f"https://{random_lower_string()}.com/"
         f"{random_lower_string(3)}?{random_lower_string(50)}"
@@ -35,7 +35,7 @@ def random_datetime_str() -> str:
     return datetime.datetime.now().strftime(DATE_FORMAT)
 
 
-def random_gbk2312(k=4) -> str:
+def random_gbk2312(k: int = 4) -> str:
     result = ""
     for i in range(k):
         result += chr(random.randint(0x4E00, 0x9FBF))

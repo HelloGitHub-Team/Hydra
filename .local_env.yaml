@@ -1,9 +1,9 @@
-weixin:
-  account: GitHub
-  token: xxxxx
+wechat:
+  account: GitHub520
+  token: xxxx
 
-db_url: mysql+pymysql://root:@127.0.0.1:3306/xxxx
+db_url: mysql+pymysql://root:@127.0.0.1:3306/hellogithub
 
 sentry:
-  dsn: xxxx
+  dsn: https://xxx.ingest.sentry.io/
   traces_sample_rate: 1.0

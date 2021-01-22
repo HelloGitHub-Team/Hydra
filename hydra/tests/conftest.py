@@ -6,33 +6,25 @@
 #   Date    :   2021-01-19 00:09
 #   Desc    :   测试通用的部分
 import time
-from typing import Generator
+from typing import Any, Generator
 
 import pytest
 
-from hydra.db.base import get_db
 from hydra.tests.utils.utils import DATE_FORMAT
 
 
 @pytest.fixture(scope="session", autouse=True)
-def timer_session_scope():
+def timer_session_scope() -> Generator:
     start = time.time()
     print("\nstart: {}".format(time.strftime(DATE_FORMAT, time.localtime(start))))
     yield
-
     finished = time.time()
     print("finished: {}".format(time.strftime(DATE_FORMAT, time.localtime(finished))))
     print("Total time cost: {:.3f}s".format(finished - start))
 
 
 @pytest.fixture(autouse=True)
-def timer_function_scope(request):
+def timer_function_scope(request: Any) -> Generator:
     start = time.time()
     yield
     print("{} Time cost: {:.3f}s".format(request.node.name, time.time() - start))
-
-
-@pytest.fixture(scope="session")
-def db() -> Generator:
-    with get_db() as db:
-        yield db
