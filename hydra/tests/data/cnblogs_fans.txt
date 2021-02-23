@@ -1,0 +1,31 @@
+<!--done-->
+<h3 class="catListTitle">公告</h3>
+
+<div id="blog-news">
+    <a href="https://github.com/521xueweihan"><img class="img_avatar" src="https://www.cnblogs.com/images/cnblogs_com/xueweihan/859919/o_2.png" alt="test" width="240"></a>
+    <div id="profile_block">
+        昵称：
+        <a href="https://home.cnblogs.com/u/xueweihan/">
+            削微寒
+        </a>
+        <br />
+        园龄：
+        <a href="https://home.cnblogs.com/u/xueweihan/" title="入园时间：2015-05-19">
+            5年9个月
+        </a>
+        <br />
+荣誉：            <a href="https://www.cnblogs.com/expert/">推荐博客</a>
+            <br/>
+        粉丝：
+        <a href="https://home.cnblogs.com/u/xueweihan/followers/">
+            2711
+        </a>
+        <br />
+        关注：
+        <a href="https://home.cnblogs.com/u/xueweihan/followees/">
+            14
+        </a>
+        <div id="p_b_follow"></div>
+        <script>getFollowStatus('41673165-d8fd-e411-b908-9dcfd8948a71');</script>
+    </div>
+</div>

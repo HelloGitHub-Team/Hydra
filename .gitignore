@@ -132,3 +132,4 @@ dmypy.json
 .idea
 .local_env.yaml
 .online_env.yaml
+.DS_Store

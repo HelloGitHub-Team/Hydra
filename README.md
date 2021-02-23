@@ -14,9 +14,9 @@
 
 创建配置文件：[.local_env.yaml](/doc/local_env.yaml)
 
-1. 安装 pyenv：`pip install pyenv`
-2. 安装并切换本地 Python 版本：`pyenv local 3.7.5`
-3. 安装 poetry：`pip install poetry`
+1. 安装 [pyenv](https://github.com/pyenv/pyenv#installation)
+2. 安装并切换本地 Python 版本：`pyenv shell 3.7.5`
+3. 安装 poetry：`pip3 install poetry`
 4. 安装依赖：在项目根目录执行 `poetry install --no-root`
 5. 运行：`poetry run 命令`
     - 检查代码风格等：`shell/lint.sh`

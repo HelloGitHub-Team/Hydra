@@ -26,7 +26,7 @@ content_data = {
     "is_original": utils.random_int(),
     "summary": utils.random_gbk2312(),
     "url": utils.random_url(),
-    "public_time": utils.random_datetime_str(),
+    "publish_time": utils.random_datetime_str(),
     "update_time": utils.random_datetime_str(),
     "get_time": utils.random_datetime_str(),
 }

@@ -25,7 +25,6 @@ with open(data_file, "r") as f:
 
 
 def test_wechat_fail(requests_mock: Any) -> None:
-    WeChat().start()
     article_url = "https://www.newrank.cn/xdnphb/detail/v1/rank/article/lists"
     rank_url = "https://www.newrank.cn/xdnphb/detail/v1/rank/data/rankings"
     fans_url = "https://www.newrank.cn/xdnphb/detail/v1/rank/head/getEstimateFansNum"

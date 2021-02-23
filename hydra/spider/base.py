@@ -22,6 +22,8 @@ class BaseSpider(object):
         self.name = self.__class__.__name__
         self.log = init_log(Config.NAME)  # 设置log名称
         self.token_header: Dict[str, str] = dict()
+        self.get_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.get_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
     @property
     def today(self) -> datetime.date:

@@ -22,8 +22,8 @@ class Content(Base):
 
     url = Column(String(255))  # 内容地址
     summary = Column(String(255))  # 标题 or 短内容 or 描述（统称为摘要）
-    is_original = Column(Integer, default=0)  # 是否为原创：1 为原创
-    is_head = Column(Integer, default=0)  # 是否为头条：1 为头条
+    is_original = Column(Integer)  # 是否为原创：1 为原创
+    is_head = Column(Integer)  # 是否为头条：1 为头条
     clicks_count = Column(Integer)  # 阅读数
     collect_count = Column(Integer)  # 收藏数
     share_count = Column(Integer)  # 分享数
@@ -33,10 +33,10 @@ class Content(Base):
     platform = Column(String(255))  # 平台名称
     content_type = Column(String(255))  # 内容类别：文章(article)、微内容(micro)、视频(video)
 
-    public_time = Column(
+    publish_time = Column(
         DateTime, default=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     )  # 内容发布时间
-    public_date = Column(
+    publish_date = Column(
         Date, default=datetime.datetime.now().strftime("%Y-%m-%d")
     )  # 内容发布日期
     update_time = Column(

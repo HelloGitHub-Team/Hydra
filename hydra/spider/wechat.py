@@ -5,7 +5,6 @@
 #   E-mail  :   595666367@qq.com
 #   Date    :   2021-01-05 21:47
 #   Desc    :   公众号平台
-import datetime
 import hashlib
 from operator import itemgetter
 from random import Random
@@ -93,7 +92,6 @@ class WeChat(BaseSpider):
 
         rank_data = self.request_newrank(rank_path, type="day")
         fans_data = self.request_newrank(fans_path)
-        get_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         rank_result: List[Dict[str, Any]] = []
 
         if not rank_data["success"] or not fans_data["success"]:
@@ -109,7 +107,7 @@ class WeChat(BaseSpider):
                     "value": rank_item.get("log1p_mark", -1),
                     "rank": rank_item.get("rank_position", -1),
                     "update_date": rank_item.get("rank_date", None),
-                    "get_time": get_time,
+                    "get_time": self.get_time,
                 }
             )
         self.log.info(f"Download {len(rank_result)} info data finish.")
@@ -125,7 +123,7 @@ class WeChat(BaseSpider):
          'share_count': 28,
          'like_count': 0,
          'comment_count': 0,
-         'public_time': '2021-01-04 08:15:00',
+         'publish_time': '2021-01-04 08:15:00',
          'title': '我们月刊最受欢迎的开源项目 Top10（2020 年）',
          'update_time': '2021-01-07 13:32:15',
          'url': 'https://mp.weixin.qq.com/xxx'}..]
@@ -136,11 +134,10 @@ class WeChat(BaseSpider):
         if not articles_data["success"]:
             self.log.error(f"POST {url_path}: No Data.")
             return articles_result
-        get_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         articles_list = articles_data["value"]["articles"]
         for day_articles in articles_list:
             for article in day_articles:
-                public_date = article.get("publicTime").split(" ")[0]
+                publish_date = article.get("publicTime").split(" ")[0]
                 articles_result.append(
                     {
                         "content_type": "article",
@@ -153,10 +150,10 @@ class WeChat(BaseSpider):
                         "is_head": int(article.get("orderNum") == 0),
                         "summary": article.get("title"),
                         "url": article.get("url"),
-                        "public_time": article.get("publicTime"),
-                        "public_date": public_date,
+                        "publish_time": article.get("publicTime"),
+                        "publish_date": publish_date,
                         "update_time": article.get("updateTime"),
-                        "get_time": get_time,
+                        "get_time": self.get_time,
                     }
                 )
         self.log.info(f"Download {len(articles_result)} article data finish.")
@@ -165,10 +162,10 @@ class WeChat(BaseSpider):
     def _start(self) -> None:
         articles_list = self.get_articles_list()
         account_info_list = self.get_account_info()
+        if not articles_list or not account_info_list:
+            raise Exception
         with get_db() as db:
             for account_info in account_info_list:
                 insert_account(db, account_info)
             for article in articles_list:
                 upinsert_content(db, article)
-        if not articles_list or not account_info_list:
-            raise Exception

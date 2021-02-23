@@ -17,5 +17,5 @@ repos:
         name: pytest-cov
         stages: [commit]
         language: system
-        entry: poetry run pytest hydra/tests --cov-fail-under=90
+        entry: poetry run pytest hydra/tests --cov=hydra --ignore=main.py  --cov-fail-under=90
         types: [python]
