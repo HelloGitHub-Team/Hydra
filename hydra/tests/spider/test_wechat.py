@@ -34,6 +34,12 @@ def test_wechat_fail(requests_mock: Any) -> None:
     WeChat().start()
 
 
+def test_wechat_fail2(requests_mock: Any) -> None:
+    article_url = "https://www.newrank.cn/xdnphb/detail/v1/rank/article/lists"
+    requests_mock.post(article_url, status_code=404)
+    WeChat().start()
+
+
 def test_wechat(requests_mock: Any) -> None:
     article_url = "https://www.newrank.cn/xdnphb/detail/v1/rank/article/lists"
     rank_url = "https://www.newrank.cn/xdnphb/detail/v1/rank/data/rankings"

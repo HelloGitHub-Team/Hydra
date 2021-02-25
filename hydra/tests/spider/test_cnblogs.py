@@ -33,6 +33,16 @@ def test_cnblogs_fail(requests_mock: Any) -> None:
     Cnblogs().start()
 
 
+def test_cnblogs_fail2(requests_mock: Any) -> None:
+    article_url = "https://www.cnblogs.com/xueweihan/"
+    rank_url = "https://www.cnblogs.com/xueweihan/ajax/sidecolumn.aspx"
+    fans_url = "https://www.cnblogs.com/xueweihan/ajax/news.aspx"
+    requests_mock.get(article_url, text=article_data)
+    requests_mock.get(rank_url, status_code=404)
+    requests_mock.get(fans_url, text=fans_data)
+    Cnblogs().start()
+
+
 def test_cnblogs(requests_mock: Any) -> None:
     article_url = "https://www.cnblogs.com/xueweihan/"
     rank_url = "https://www.cnblogs.com/xueweihan/ajax/sidecolumn.aspx"

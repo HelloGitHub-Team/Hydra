@@ -36,3 +36,7 @@ class Config(object):
     @classmethod
     def wechat(cls) -> tuple:
         return "wechat", cls.conf["wechat"]["account"], cls.conf["wechat"]["token"]
+
+    @classmethod
+    def toutiao(cls) -> tuple:
+        return cls.conf["toutiao"]["user_token"]

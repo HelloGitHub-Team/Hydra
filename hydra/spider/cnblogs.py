@@ -4,7 +4,7 @@
 #   Author  :   XueWeiHan
 #   E-mail  :   595666367@qq.com
 #   Date    :   2021-02-22 15:36
-#   Desc    :
+#   Desc    :   博客园
 from typing import Any, Dict, List
 
 from requests_html import HTML
@@ -106,6 +106,8 @@ class Cnblogs(BaseSpider):
         rs = self.request_data(
             url="https://www.cnblogs.com/xueweihan/ajax/sidecolumn.aspx"
         )
+        if rs is None:
+            return {}
         html = HTML(html=rs.text)
         account_result["value"] = int(
             html.xpath('//*[@id="sidebar_scorerank"]/div/ul/li' '[@class="liScore"]')[
@@ -117,6 +119,7 @@ class Cnblogs(BaseSpider):
                 0
             ].text.replace("排名 - ", "")
         )
+        self.log.info(f"Download {self.platform} account data finish.")
         return account_result
 
     def _start(self) -> None:

@@ -15,8 +15,10 @@ def upinsert_content(db: Session, kwargs: dict) -> Content:
     if content:
         db.query(Content).filter_by(source_id=kwargs["source_id"]).update(kwargs)
     else:
-        content = Content(**kwargs)
-        db.add(content)
+        # 没有发布时间字段，不新建否则发布时间错误
+        if "publish_date" in kwargs:
+            content = Content(**kwargs)
+            db.add(content)
     db.commit()
     return content
 

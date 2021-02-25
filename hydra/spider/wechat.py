@@ -4,7 +4,7 @@
 #   Author  :   XueWeiHan
 #   E-mail  :   595666367@qq.com
 #   Date    :   2021-01-05 21:47
-#   Desc    :   公众号平台
+#   Desc    :   公众号
 import hashlib
 from operator import itemgetter
 from random import Random
@@ -83,8 +83,7 @@ class WeChat(BaseSpider):
         )
         if response:
             return response.json()
-        else:
-            return dict()
+        return dict()
 
     def get_account_info(self) -> list:
         rank_path = "/xdnphb/detail/v1/rank/data/rankings"
@@ -94,7 +93,12 @@ class WeChat(BaseSpider):
         fans_data = self.request_newrank(fans_path)
         rank_result: List[Dict[str, Any]] = []
 
-        if not rank_data["success"] or not fans_data["success"]:
+        if (
+            not rank_data
+            or not fans_data
+            or not rank_data["success"]
+            or not fans_data["success"]
+        ):
             self.log.error(f"POST {rank_path} or {fans_path}: No Data.")
             return rank_result
         fans = int(fans_data["value"]["fullAvg_read"].replace(",", ""))
@@ -110,7 +114,7 @@ class WeChat(BaseSpider):
                     "get_time": self.get_time,
                 }
             )
-        self.log.info(f"Download {len(rank_result)} info data finish.")
+        self.log.info(f"Download {self.platform} account data finish.")
         return rank_result
 
     def get_articles_list(self) -> list:
@@ -131,7 +135,7 @@ class WeChat(BaseSpider):
         url_path = "/xdnphb/detail/v1/rank/article/lists"
         articles_data = self.request_newrank(url_path)
         articles_result: List[Dict[str, Any]] = []
-        if not articles_data["success"]:
+        if not articles_data or not articles_data["success"]:
             self.log.error(f"POST {url_path}: No Data.")
             return articles_result
         articles_list = articles_data["value"]["articles"]

@@ -133,3 +133,6 @@ dmypy.json
 .local_env.yaml
 .online_env.yaml
 .DS_Store
+
+# node
+node_modules/

@@ -9,13 +9,13 @@ import argparse
 
 from hydra.spider.wechat import WeChat
 from hydra.spider.cnblogs import Cnblogs
-
+from hydra.spider.toutiao import Toutiao
 
 if __name__ == "__main__":
     # 1. 设置解析器
     parser = argparse.ArgumentParser(description='Script run')
     # 2. 定义参数
-    parser.add_argument('name',  metavar='name', type=str)
+    parser.add_argument('name', metavar='name', type=str)
     # 3. 解析命令行
     args = parser.parse_args()
     name = args.name
@@ -26,3 +26,6 @@ if __name__ == "__main__":
     elif name == 'cnblogs':
         c = Cnblogs()
         c.start()
+    elif name == 'toutiao':
+        t = Toutiao()
+        t.start()

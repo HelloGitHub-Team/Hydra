@@ -4,3 +4,4 @@ exclude = .git,__pycache__,__init__.py,.mypy_cache,.pytest_cache
 ignore =
     # trailing whitespace
     W291
+    W503
