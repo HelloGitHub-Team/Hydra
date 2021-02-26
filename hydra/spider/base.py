@@ -6,10 +6,12 @@
 #   Date    :   2021-01-21 15:57
 #   Desc    :
 import datetime
+import random
 import time
 from typing import Any, Dict, Optional, Union
 
 import requests
+from requests.adapters import HTTPAdapter
 
 from hydra.config import Config
 from hydra.utils import init_log
@@ -24,10 +26,20 @@ class BaseSpider(object):
         self.token_header: Dict[str, str] = dict()
         self.get_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.get_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        self.session = requests.Session()
+        self.session.mount("https://", HTTPAdapter(max_retries=3))
 
     @property
     def today(self) -> datetime.date:
         return datetime.date.today()
+
+    @staticmethod
+    def random_agent() -> str:
+        user_agent = [
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_0) AppleWebKit/537.36"
+            " (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"
+        ]
+        return random.choice(user_agent)
 
     def request_data(
         self, method: Union[str, bytes] = "GET", **kwargs: Any
@@ -35,7 +47,9 @@ class BaseSpider(object):
         method = str(method)
         url = kwargs.pop("url")
         if not kwargs.get("timeout"):
-            kwargs["timeout"] = 20
+            kwargs["timeout"] = (5, 5)
+        if not kwargs.get("headers"):
+            kwargs["headers"] = {"user-agent": self.random_agent()}
         # 过滤敏感信息，防止打到日志中
         args_list = []
         for k, v in kwargs.items():
@@ -48,9 +62,9 @@ class BaseSpider(object):
         try:
             s_time = time.time()
             if method.upper() == "GET":
-                response = requests.get(url, **kwargs)
+                response = self.session.get(url, **kwargs)
             else:
-                response = requests.post(url, **kwargs)
+                response = self.session.post(url, **kwargs)
             speed_time = round(time.time() - s_time, 2)
             r_limit = response.headers.get("X-RateLimit-Remaining", 0)
             limit = response.headers.get("X-RateLimit-Limit", 0)

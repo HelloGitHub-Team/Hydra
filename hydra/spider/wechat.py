@@ -69,17 +69,11 @@ class WeChat(BaseSpider):
         :param method: HTTP method
         """
         url = "https://www.newrank.cn" + url_path
-        headers = {
-            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0_1)"
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/87.0.4280.88 Safari/537.36",
-            "authority": "www.newrank.cn",
-        }
         cookies = {"token": self.token}
         kwargs.update({"account": self.account})
         params = self.generate_params(url_path, kwargs)
         response = self.request_data(
-            url=url, method=method, params=params, headers=headers, cookies=cookies
+            url=url, method=method, params=params, cookies=cookies
         )
         if response:
             return response.json()

@@ -10,6 +10,7 @@ import argparse
 from hydra.spider.wechat import WeChat
 from hydra.spider.cnblogs import Cnblogs
 from hydra.spider.toutiao import Toutiao
+from hydra.spider.csdn import Csdn
 
 if __name__ == "__main__":
     # 1. 设置解析器
@@ -28,4 +29,7 @@ if __name__ == "__main__":
         c.start()
     elif name == 'toutiao':
         t = Toutiao()
+        t.start()
+    elif name == 'csdn':
+        t = Csdn()
         t.start()

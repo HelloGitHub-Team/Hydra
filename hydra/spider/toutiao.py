@@ -24,11 +24,6 @@ https://www.toutiao.com/c/user/61302299383/
 class Toutiao(BaseSpider):
     def __init__(self) -> None:
         super(Toutiao, self).__init__()
-        self.headers = {
-            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_0)"
-            " AppleWebKit/537.36 (KHTML, like Gecko)"
-            " Chrome/88.0.4324.182 Safari/537.36"
-        }
         self.platform = "toutiao"
         self.user_token = Config.toutiao()
 
@@ -41,7 +36,6 @@ class Toutiao(BaseSpider):
         articles_result: List[Dict[str, Any]] = []
         rs = self.request_data(
             url=url,
-            headers=self.headers,
             params={
                 "category": "pc_profile_article",
                 "utm_source": "toutiao",
@@ -88,7 +82,6 @@ class Toutiao(BaseSpider):
         micros_result: List[Dict[str, Any]] = []
         rs = self.request_data(
             url=url,
-            headers=self.headers,
             params={
                 "category": "pc_profile_ugc",
                 "utm_source": "toutiao",
@@ -141,7 +134,6 @@ class Toutiao(BaseSpider):
         rs = self.request_data(
             url=url,
             method="POST",
-            headers=self.headers,
             params={"_signature": self.signature(url)},
             data={"token": self.user_token},
         )
