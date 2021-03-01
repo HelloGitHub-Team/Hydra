@@ -31,8 +31,8 @@ class Juejin(BaseSpider):
         self.platform = "juejin"
         self.site = "https://juejin.cn/"
         self.articles_result: List[Dict[str, Any]] = []
+        self.hotspot_result: List[Dict[str, Any]] = []
         self.cursor = 0
-
 
     def get_articles_list(self) -> list:
         """
@@ -52,9 +52,9 @@ class Juejin(BaseSpider):
         )
         if rs:
             json_data = rs.json()
-            if json_data["err_msg"] != "success":
+            if json_data["err_msg"] != "success" or not json_data['data']:
                 return self.articles_result
-            print(len(json_data['data']))
+
             for article in json_data["data"]:
                 self.articles_result.append(
                     {
@@ -77,6 +77,8 @@ class Juejin(BaseSpider):
             if json_data['has_more']:
                 self.cursor += 10
                 self.get_articles_list()
+
+            self.cursor = 0
 
         return self.articles_result
 
@@ -104,13 +106,61 @@ class Juejin(BaseSpider):
         self.log.info(f"Download {self.platform} account data finish.")
         return account_result
 
+    def get_hotspot_list(self) -> list:
+        """
+        获取沸点数据
+        """
+        url = "https://api.juejin.cn/content_api/v1/short_msg/query_list"
+        payload = {'sort_type': 4, 'cursor': str(self.cursor), 'limit': 20, 'user_id': "1574156384091320"}
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        hotspot_result: List[Dict[str, Any]] = []
+        rs = self.request_data(
+            'POST',
+            url=url,
+            data=json.dumps(payload),
+            headers=headers
+        )
+        if rs:
+            json_data = rs.json()
+            if json_data["err_msg"] != "success" or not json_data['data']:
+                return hotspot_result
+            for essay in json_data["data"]:
+                self.hotspot_result.append(
+                    {
+                        "content_type": "micro",
+                        "platform": self.platform,
+                        "source_id": essay['msg_id'],
+                        "like_count": essay['msg_Info']['digg_count'],
+                        "comment_count": essay['msg_Info']['comment_count'],
+                        "summary": essay['msg_Info']['content'][:30],
+                        "publish_time": datetime.fromtimestamp(int(essay['msg_Info']['ctime'])),
+                        "publish_date": datetime.fromtimestamp(int(essay['msg_Info']['ctime'])).date(),
+                        "get_time": self.get_time,
+                        "update_time": self.get_time,
+                    }
+                )
+            if json_data['has_more']:
+                self.cursor += 20
+                self.get_hotspot_list()
+
+            self.cursor = 0
+
+        self.log.info(f"Download {len(self.hotspot_result)} hotspot data finish.")
+
+        return self.hotspot_result
+
     def _start(self) -> None:
         articles_list = self.get_articles_list()
+        hotspot_list = self.get_hotspot_list()
         account_info = self.get_account_info()
-        if not articles_list or not account_info:
+        if not articles_list or not account_info or not hotspot_list:
             raise Exception
         with get_db() as db:
             insert_account(db, account_info)
             for article in articles_list:
                 upinsert_content(db, article)
+            for hotspot in hotspot_list:
+                upinsert_content(db, hotspot)
 

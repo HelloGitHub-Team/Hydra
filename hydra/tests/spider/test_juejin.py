@@ -11,16 +11,20 @@ from typing import Any
 
 from hydra.spider.juejin import Juejin
 
-data_file = os.path.dirname(os.path.dirname(__file__)) + "/data/junjin_article.json"
+data_file = os.path.dirname(os.path.dirname(__file__)) + "/data/juejin_article.json"
 with open(data_file, "r") as f:
     article_data = json.load(f)
 
-data_file = os.path.dirname(os.path.dirname(__file__)) + "/data/junjin_fans.json"
+data_file = os.path.dirname(os.path.dirname(__file__)) + "/data/juejin_micro.json"
+with open(data_file, "r") as f:
+    micro_data = json.load(f)
+
+data_file = os.path.dirname(os.path.dirname(__file__)) + "/data/juejin_fans.json"
 with open(data_file, "r") as f:
     fans_data = json.load(f)
 
 
-def test_junjin_fail(requests_mock: Any) -> None:
+def test_juejin_fail(requests_mock: Any) -> None:
     article_url = "https://api.juejin.cn/content_api/v1/article/query_list"
     fans_url = "https://api.juejin.cn/user_api/v1/user/get?aid=2608&user_id=1574156384091320&not_self=1"
     requests_mock.get(article_url, json={"message": "fail"})
@@ -28,9 +32,11 @@ def test_junjin_fail(requests_mock: Any) -> None:
     Juejin().start()
 
 
-def test_junjin(requests_mock: Any) -> None:
+def test_juejin(requests_mock: Any) -> None:
     article_url = "https://api.juejin.cn/content_api/v1/article/query_list"
+    micro_url = "https://api.juejin.cn/content_api/v1/short_msg/query_list"
     fans_url = "https://api.juejin.cn/user_api/v1/user/get?aid=2608&user_id=1574156384091320&not_self=1"
     requests_mock.get(article_url, json=article_data)
     requests_mock.post(fans_url, json=fans_data)
+    requests_mock.post(micro_url, json=micro_data)
     Juejin().start()
