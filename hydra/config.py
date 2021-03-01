@@ -6,6 +6,7 @@
 #   Date    :   2021-01-12 21:13
 #   Desc    :   配置
 import os
+from http.cookies import SimpleCookie
 
 import yaml
 
@@ -38,5 +39,14 @@ class Config(object):
         return "wechat", cls.conf["wechat"]["account"], cls.conf["wechat"]["token"]
 
     @classmethod
-    def toutiao(cls) -> tuple:
+    def toutiao(cls) -> str:
         return cls.conf["toutiao"]["user_token"]
+
+    @classmethod
+    def zhihu(cls) -> dict:
+        cookie_dict = {}
+        cookie: SimpleCookie = SimpleCookie()
+        cookie.load(cls.conf["zhihu"]["cookie"])
+        for k, v in cookie.items():
+            cookie_dict[k] = v.value
+        return cookie_dict

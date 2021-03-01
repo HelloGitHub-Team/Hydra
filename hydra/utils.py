@@ -13,6 +13,8 @@ from logging.handlers import (
     TimedRotatingFileHandler,
 )
 
+from hydra.config import Config
+
 
 def init_log(name: str, log_type: str = None) -> Logger:
     log_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs/")
@@ -38,3 +40,6 @@ def init_log(name: str, log_type: str = None) -> Logger:
     handler.setFormatter(formatter)
     log_object.addHandler(handler)
     return log_object
+
+
+logger = init_log(Config.NAME)

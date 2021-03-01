@@ -11,6 +11,7 @@ from hydra.spider.wechat import WeChat
 from hydra.spider.cnblogs import Cnblogs
 from hydra.spider.toutiao import Toutiao
 from hydra.spider.csdn import Csdn
+from hydra.spider.zhihu import Zhihu
 
 if __name__ == "__main__":
     # 1. 设置解析器
@@ -20,16 +21,10 @@ if __name__ == "__main__":
     # 3. 解析命令行
     args = parser.parse_args()
     name = args.name
+    spider_map = {
+        "wechat": WeChat(), "cnblogs": Cnblogs(), "toutiao": Toutiao(),
+        "csdn": Csdn(), "zhihu": Zhihu()}
 
-    if name == 'wechat':
-        w = WeChat()
-        w.start()
-    elif name == 'cnblogs':
-        c = Cnblogs()
-        c.start()
-    elif name == 'toutiao':
-        t = Toutiao()
-        t.start()
-    elif name == 'csdn':
-        t = Csdn()
-        t.start()
+    spider = spider_map.get(name)
+    if spider:
+        spider.start()

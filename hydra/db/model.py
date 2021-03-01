@@ -31,7 +31,7 @@ class Content(Base):
     comment_count = Column(Integer)  # 评论数
     source_id = Column(String(255))  # 对应平台上内容的唯一 ID
     platform = Column(String(255))  # 平台名称
-    content_type = Column(String(255))  # 内容类别：文章(article)、微内容(micro)、视频(video)
+    content_type = Column(String(255))  # 内容类别：文章(article)、微内容(pin)、视频(video)
 
     publish_time = Column(
         DateTime, default=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")

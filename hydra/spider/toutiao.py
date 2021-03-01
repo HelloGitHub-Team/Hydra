@@ -31,8 +31,8 @@ class Toutiao(BaseSpider):
         """
         获取文章数据
         """
-        json_data = dict()
         url = "https://www.toutiao.com/api/pc/feed/"
+        json_data = dict()
         articles_result: List[Dict[str, Any]] = []
         rs = self.request_data(
             url=url,
@@ -73,12 +73,12 @@ class Toutiao(BaseSpider):
         self.log.info(f"Download {len(articles_result)} article data finish.")
         return articles_result
 
-    def get_micro_list(self) -> list:
+    def get_pin_list(self) -> list:
         """
         获取微头条数据
         """
-        json_data = {}
         url = "https://www.toutiao.com/api/pc/feed/"
+        json_data = {}
         micros_result: List[Dict[str, Any]] = []
         rs = self.request_data(
             url=url,
@@ -100,12 +100,12 @@ class Toutiao(BaseSpider):
             )
             source_id = item["concern_talk_cell"]["id"]
             item_detail = json.loads(item["concern_talk_cell"]["packed_json_str"])
-            summary = item_detail["content"][:30].strip()
+            summary = item_detail["content"][:50].strip()
             clicks_count = item_detail["read_count"]
             if clicks_count.count("万") > 0:
                 clicks_count = int(float(clicks_count.replace("万", "")) * 10000)
             micro = {
-                "content_type": "micro",
+                "content_type": "pin",
                 "platform": self.platform,
                 "source_id": source_id,
                 "clicks_count": clicks_count,
@@ -119,10 +119,11 @@ class Toutiao(BaseSpider):
                 "update_time": self.get_time,
             }
             micros_result.append(micro)
-        self.log.info(f"Download {len(micros_result)} micro data finish.")
+        self.log.info(f"Download {len(micros_result)} pin data finish.")
         return micros_result
 
     def get_account_info(self) -> dict:
+        url = "https://www.toutiao.com/api/pc/user/fans_stat"
         json_data = {}
         account_result: Dict[str, Any] = {
             "platform": self.platform,
@@ -130,7 +131,6 @@ class Toutiao(BaseSpider):
             "get_time": self.get_time,
             "update_date": self.get_date,
         }
-        url = "https://www.toutiao.com/api/pc/user/fans_stat"
         rs = self.request_data(
             url=url,
             method="POST",
@@ -158,7 +158,7 @@ class Toutiao(BaseSpider):
 
     def _start(self) -> None:
         articles_list = self.get_articles_list()
-        micros_list = self.get_micro_list()
+        micros_list = self.get_pin_list()
         account_info = self.get_account_info()
         if not articles_list or not account_info or not micros_list:
             raise Exception

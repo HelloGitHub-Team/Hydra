@@ -11,10 +11,8 @@ import time
 from typing import Any, Dict, Optional, Union
 
 import requests
-from requests.adapters import HTTPAdapter
 
-from hydra.config import Config
-from hydra.utils import init_log
+from hydra.utils import logger
 
 # requests.packages.urllib3.disable_warnings()
 
@@ -22,12 +20,11 @@ from hydra.utils import init_log
 class BaseSpider(object):
     def __init__(self) -> None:
         self.name = self.__class__.__name__
-        self.log = init_log(Config.NAME)  # 设置log名称
+        self.log = logger
         self.token_header: Dict[str, str] = dict()
         self.get_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.get_date = datetime.datetime.now().strftime("%Y-%m-%d")
         self.session = requests.Session()
-        self.session.mount("https://", HTTPAdapter(max_retries=3))
 
     @property
     def today(self) -> datetime.date:
@@ -47,7 +44,7 @@ class BaseSpider(object):
         method = str(method)
         url = kwargs.pop("url")
         if not kwargs.get("timeout"):
-            kwargs["timeout"] = (5, 5)
+            kwargs["timeout"] = 5
         if not kwargs.get("headers"):
             kwargs["headers"] = {"user-agent": self.random_agent()}
         # 过滤敏感信息，防止打到日志中
