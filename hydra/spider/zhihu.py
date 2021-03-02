@@ -110,10 +110,8 @@ class Zhihu(BaseSpider):
             "update_date": self.get_date,
         }
         rs = self.request_data(url=url, cookies=self.cookie)
-        print("1111 rs:", rs)
         if rs:
             json_data = rs.json()
-            print("1111 json:", json_data)
             if not json_data:
                 return account_result
         account_result["value"] = json_data.get("level", {}).get("score", -1)

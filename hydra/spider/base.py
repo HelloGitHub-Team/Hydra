@@ -11,6 +11,7 @@ import time
 from typing import Any, Dict, Optional, Union
 
 import requests
+from requests.adapters import HTTPAdapter
 
 from hydra.utils import logger
 
@@ -20,11 +21,12 @@ from hydra.utils import logger
 class BaseSpider(object):
     def __init__(self) -> None:
         self.name = self.__class__.__name__
-        self.log = logger
+        self.log = logger  # 设置log名称
         self.token_header: Dict[str, str] = dict()
         self.get_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.get_date = datetime.datetime.now().strftime("%Y-%m-%d")
         self.session = requests.Session()
+        self.session.mount("https://", HTTPAdapter(max_retries=3))
 
     @property
     def today(self) -> datetime.date:
@@ -44,13 +46,13 @@ class BaseSpider(object):
         method = str(method)
         url = kwargs.pop("url")
         if not kwargs.get("timeout"):
-            kwargs["timeout"] = 5
+            kwargs["timeout"] = (5, 5)
         if not kwargs.get("headers"):
             kwargs["headers"] = {"user-agent": self.random_agent()}
         # 过滤敏感信息，防止打到日志中
         args_list = []
         for k, v in kwargs.items():
-            if k == "auth":
+            if k == "data" or k == "cookies" or k == "headers":
                 continue
             if isinstance(v, dict) and (("Authorization" in v) or ("token" in v)):
                 continue
@@ -63,19 +65,15 @@ class BaseSpider(object):
             else:
                 response = self.session.post(url, **kwargs)
             speed_time = round(time.time() - s_time, 2)
-            r_limit = response.headers.get("X-RateLimit-Remaining", 0)
-            limit = response.headers.get("X-RateLimit-Limit", 0)
             if response.status_code == 200:
                 self.log.info(
                     f"{self.name} {method.upper()} {url} "
-                    f"{speed_time}s limit: {r_limit}/{limit} "
-                    f"{args_str} {response.status_code}"
+                    f"{speed_time}s {args_str} {response.status_code}"
                 )
                 return response
             else:
                 self.log.info(
-                    f"{self.name} {method.upper()} {url} "
-                    f"limit: {r_limit}/{limit} {args_str}"
+                    f"{self.name} {method.upper()} {url} {args_str}"
                     f" {response.status_code} {speed_time}s "
                     f"ERROR: {str(response.content)}."
                 )
