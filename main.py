@@ -12,6 +12,7 @@ from hydra.spider.cnblogs import Cnblogs
 from hydra.spider.toutiao import Toutiao
 from hydra.spider.csdn import Csdn
 from hydra.spider.zhihu import Zhihu
+from hydra.spider.juejin import Juejin
 
 if __name__ == "__main__":
     # 1. 设置解析器
@@ -23,7 +24,7 @@ if __name__ == "__main__":
     name = args.name
     spider_map = {
         "wechat": WeChat(), "cnblogs": Cnblogs(), "toutiao": Toutiao(),
-        "csdn": Csdn(), "zhihu": Zhihu()}
+        "csdn": Csdn(), "zhihu": Zhihu(), "juejin": Juejin()}
 
     spider = spider_map.get(name)
     if spider:

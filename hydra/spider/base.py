@@ -54,8 +54,8 @@ class BaseSpider(object):
         for k, v in kwargs.items():
             if k == "data" or k == "cookies" or k == "headers":
                 continue
-            if isinstance(v, dict) and (("Authorization" in v) or ("token" in v)):
-                continue
+            # if isinstance(v, dict) and (("Authorization" in v) or ("token" in v)):
+            #     continue
             args_list.append("{}: {}".format(k, v))
         args_str = "{" + ",".join(args_list) + "}"
         try:
