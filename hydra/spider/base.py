@@ -21,7 +21,7 @@ from hydra.utils import logger
 class BaseSpider(object):
     def __init__(self) -> None:
         self.name = self.__class__.__name__
-        self.log = logger  # 设置log名称
+        self.log = logger
         self.token_header: Dict[str, str] = dict()
         self.get_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.get_date = datetime.datetime.now().strftime("%Y-%m-%d")

@@ -1,9 +1,13 @@
 wechat:
-  account: xxx
-  token: xxx
+  account:
+  token:
+toutiao:
+  user_token:
+zhihu:
+  cookie:
 
-db_url: mysql+pymysql://root:@127.0.0.1:3306/xx
+db_url: mysql+pymysql://root:@127.0.0.1:3306/dbname
 
 sentry:
-  dsn: https://xxx.ingest.sentry.io/5xx
+  dsn: https://xxxx.ingest.sentry.io/123
   traces_sample_rate: 1.0

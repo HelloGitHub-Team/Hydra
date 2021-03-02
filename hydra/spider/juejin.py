@@ -16,11 +16,6 @@ from hydra.spider.base import BaseSpider
 
 """
 url: https://api.juejin.cn/content_api/v1/article/query_list
-params: {
-            "user_id": "1574156384091320",
-            "sort_type": 2,
-            "cursor": "50"
-        }
 """
 
 

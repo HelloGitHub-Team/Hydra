@@ -2,7 +2,7 @@
 
 基于 Python3 实现的汇集 HelloGitHub 在多个平台的账号信息。包含文章、短内容的表现，即阅读、点赞、分享等。
 
-支持：公众号、博客园、头条、CSDN、知乎、掘金
+支持：公众号、博客园、头条、CSDN、知乎、掘金、即刻
 
 **注意：** 本项目不是爬虫，仅聚合自己的 HelloGitHub 账号在多个平台的数据，方便查看和分析！
 
@@ -16,7 +16,7 @@
 2. 安装并切换 Python 版本：`pyenv shell 3.7.5`
 3. 安装 poetry：`pip3 install poetry`
 4. 安装依赖：在项目根目录执行 `poetry install --no-root`
-5. 运行项目：`poetry run python main.py wechat|cnblogs|toutiao|csdn|zhihu|juejin`
+5. 运行项目：`poetry run python main.py wechat|cnblogs|toutiao|csdn|zhihu|juejin|jike`
     - 检查代码风格等：`shell/lint.sh`
     - 格式化代码等：`shell/format.sh`
     - 测试：`shell/test.sh`
