@@ -4,16 +4,16 @@
 #   Author  :   XueWeiHan
 #   E-mail  :   595666367@qq.com
 #   Date    :   2021-01-22 15:24
-#   Desc    :
+#   Desc    :   运行
 import argparse
 
-from hydra.spider.wechat import WeChat
-from hydra.spider.cnblogs import Cnblogs
-from hydra.spider.toutiao import Toutiao
-from hydra.spider.csdn import Csdn
-from hydra.spider.zhihu import Zhihu
-from hydra.spider.juejin import Juejin
-from hydra.spider.jike import Jike
+from hydra.spider import *
+
+SPIDER_MAP = {
+    "wechat": WeChat(), "cnblogs": Cnblogs(), "toutiao": Toutiao(),
+    "csdn": Csdn(), "zhihu": Zhihu(), "juejin": Juejin(), "jike": Jike()
+}
+
 
 if __name__ == "__main__":
     # 1. 设置解析器
@@ -23,11 +23,8 @@ if __name__ == "__main__":
     # 3. 解析命令行
     args = parser.parse_args()
     name = args.name
-    spider_map = {
-        "wechat": WeChat(), "cnblogs": Cnblogs(), "toutiao": Toutiao(),
-        "csdn": Csdn(), "zhihu": Zhihu(), "juejin": Juejin(), "jike": Jike()}
 
-    spider = spider_map.get(name)
+    spider = SPIDER_MAP.get(name)
     if spider:
         spider.start()
     else:

@@ -749,8 +749,8 @@ url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 reference = "tsinghua"
 
 [[package]]
-name = "sche"
-version = "1.0a5"
+name = "schedule"
+version = "1.0.0"
 description = "Job scheduling for humans."
 category = "main"
 optional = false
@@ -971,7 +971,7 @@ reference = "tsinghua"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "bab888577741404ca3ef79d285d7c07bed13ac67643bea37e3eaeb106d72f440"
+content-hash = "dfe99a071d8aaa2f676d6a3a00f45c98d42942316334f322c6c4e4c9fbd8c8c2"
 
 [metadata.files]
 appdirs = [
@@ -1319,9 +1319,9 @@ requests-mock = [
     {file = "requests-mock-1.8.0.tar.gz", hash = "sha256:e68f46844e4cee9d447150343c9ae875f99fa8037c6dcf5f15bf1fe9ab43d226"},
     {file = "requests_mock-1.8.0-py2.py3-none-any.whl", hash = "sha256:11215c6f4df72702aa357f205cf1e537cffd7392b3e787b58239bde5fb3db53b"},
 ]
-sche = [
-    {file = "sche-1.0a5-py2.py3-none-any.whl", hash = "sha256:4df4ceab21e3c851537997076b31eda1ed908f902b6b88b5ec2a3cab4a64901f"},
-    {file = "sche-1.0a5.tar.gz", hash = "sha256:30650a1267eb5a335bd3e3c22b71bd928ca449fb3d3a5ffb18de45ed9533f0d1"},
+schedule = [
+    {file = "schedule-1.0.0-py2.py3-none-any.whl", hash = "sha256:82369250700af61af40bbf38efc8698560aaba8fa3e58eec7209c20aa05b9d02"},
+    {file = "schedule-1.0.0.tar.gz", hash = "sha256:1654cf70860a6d4d58236c98b0f1bb71521cc2a4bbf031b6cc39c96e77d59a91"},
 ]
 six = [
     {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},

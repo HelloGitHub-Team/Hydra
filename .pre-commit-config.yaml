@@ -13,9 +13,9 @@ repos:
         language: system
         entry: poetry run sh shell/format.sh
         types: [python]
-      - id: pytest-cov
-        name: pytest-cov
+      - id: test
+        name: test
         stages: [commit]
         language: system
-        entry: poetry run pytest hydra/tests --cov=hydra --ignore=main.py  --cov-fail-under=90
+        entry: poetry run sh shell/test.sh
         types: [python]

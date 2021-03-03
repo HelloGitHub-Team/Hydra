@@ -102,14 +102,13 @@ class BaseSpider(object):
 
     def start(self) -> None:
         try:
+            self.log.info(f"{self.name} spider start.")
             s_time = time.time()
             self._start()
             e_time = time.time()
             self.log.info(
-                "{} spider success speed {}s.".format(
-                    self.name, round((e_time - s_time), 2)
-                )
+                f"{self.name} spider finish speed {round((e_time - s_time), 2)}s."
             )
         except Exception as e:
             self.log.exception(e)
-            self.log.error("{} spider error. {}".format(self.name, e))
+            self.log.error(f"{self.name} spider error. {e}")
