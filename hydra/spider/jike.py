@@ -6,7 +6,7 @@
 #   Date    :   2021-02-28 23:33
 #   Desc    :   即刻
 import datetime
-from typing import Any, Dict, List, Tuple
+from typing import Tuple
 
 from requests_html import HTML, HtmlElement
 
@@ -21,8 +21,6 @@ class Jike(BaseSpider):
         self.platform = "jike"
         self.host = "https://web.okjike.com"
         self.user_id = "ff31a838-6eb9-440d-9970-dabc5b2c0309"
-        self.content_result: List[Dict[str, Any]] = []
-        self.account_result: Dict[str, Any] = {}
 
     @staticmethod
     def _parse(item: HtmlElement) -> Tuple[int, int, int]:
@@ -51,22 +49,21 @@ class Jike(BaseSpider):
 
     def get_all_info(self) -> None:
         url = f"{self.host}/u/{self.user_id}"
-        self.account_result = {
-            "platform": self.platform,
-            "fans": -1,
-            "get_time": self.get_time,
-            "update_date": self.get_date,
-        }
         rs = self.request_data(url=url)
         if rs is None:
             return
-        print("rs:", rs)
         html = HTML(html=rs.text)
-        self.account_result["fans"] = int(
+        fans = int(
             html.xpath(
                 '//div[@class="sc-bdfBwQ sc-gsTCUz ' 'bedXUN bhdLno"]/a[2]/span'
             )[0].text.strip()
         )
+        self.account_result = {
+            "platform": self.platform,
+            "fans": fans,
+            "get_time": self.get_time,
+            "update_date": self.get_date,
+        }
         self.log.info(f"Download {self.platform} account data finish.")
         pin_result = html.xpath(
             '//div[@class="sc-bdfBwQ sc-gsTCUz '
@@ -115,9 +112,12 @@ class Jike(BaseSpider):
 
     def _start(self) -> None:
         self.get_all_info()
-        if not self.account_result or not self.content_result:
-            raise Exception
-        with get_db() as db:
-            insert_account(db, self.account_result)
-            for pin in self.content_result:
-                upinsert_content(db, pin)
+        if not self.result_is_empty():
+            with get_db() as db:
+                insert_account(db, self.account_result)
+                for pin in self.content_result:
+                    upinsert_content(db, pin)
+        self.log.info(
+            f"Save {self.name} content: {len(self.content_result)} "
+            f"| account: {self.account_result} data finish."
+        )

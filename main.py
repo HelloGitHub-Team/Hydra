@@ -30,3 +30,5 @@ if __name__ == "__main__":
     spider = spider_map.get(name)
     if spider:
         spider.start()
+    else:
+        print("spider name error.")

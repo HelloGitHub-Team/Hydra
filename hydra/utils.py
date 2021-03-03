@@ -6,14 +6,13 @@
 #   Date    :   2021-01-21 16:00
 #   Desc    :
 import os
+from http.cookies import SimpleCookie
 from logging import DEBUG, Formatter, Logger, StreamHandler, getLogger
 from logging.handlers import (
     BaseRotatingHandler,
     RotatingFileHandler,
     TimedRotatingFileHandler,
 )
-
-from hydra.config import Config
 
 
 def init_log(name: str, log_type: str = None) -> Logger:
@@ -42,4 +41,10 @@ def init_log(name: str, log_type: str = None) -> Logger:
     return log_object
 
 
-logger = init_log(Config.NAME)
+def make_cookie(cookie_str: str) -> dict:
+    cookie_dict = {}
+    cookie: SimpleCookie = SimpleCookie()
+    cookie.load(cookie_str)
+    for k, v in cookie.items():
+        cookie_dict[k] = v.value
+    return cookie_dict

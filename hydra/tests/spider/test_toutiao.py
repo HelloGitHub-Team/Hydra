@@ -15,30 +15,34 @@ data_file = os.path.dirname(os.path.dirname(__file__)) + "/data/toutiao_article.
 with open(data_file, "r") as f:
     article_data = json.load(f)
 
-data_file = os.path.dirname(os.path.dirname(__file__)) + "/data/toutiao_micro.json"
+data_file = os.path.dirname(os.path.dirname(__file__)) + "/data/toutiao_pin.json"
 with open(data_file, "r") as f:
-    micro_data = json.load(f)
+    pin_data = json.load(f)
 
 data_file = os.path.dirname(os.path.dirname(__file__)) + "/data/toutiao_fans.json"
 with open(data_file, "r") as f:
     fans_data = json.load(f)
 
+article_url = (
+    "https://mp.toutiao.com/mp/agw/statistic/v2/item/list?type=1&"
+    "page_size=30&page_num=1&app_id=1231"
+)
+pin_url = (
+    "https://mp.toutiao.com/mp/agw/statistic/v2/item/list?type=3&"
+    "page_size=30&page_num=1&app_id=1231"
+)
+fans_url = "https://mp.toutiao.com/mp/agw/statistic/v2/fans/latest_stat?app_id=1231"
+
 
 def test_toutiao_fail(requests_mock: Any) -> None:
-    article_url = "https://www.toutiao.com/api/pc/feed/?category=pc_profile_article"
-    micro_url = "https://www.toutiao.com/api/pc/feed/?category=pc_profile_ugc"
-    fans_url = "https://www.toutiao.com/api/pc/user/fans_stat"
     requests_mock.get(article_url, json={"message": "fail"})
-    requests_mock.get(micro_url, json={"message": "fail"})
-    requests_mock.post(fans_url, json={"message": "fail"})
+    requests_mock.get(pin_url, json={"message": "fail"})
+    requests_mock.get(fans_url, json={"message": "fail"})
     Toutiao().start()
 
 
 def test_toutiao(requests_mock: Any) -> None:
-    article_url = "https://www.toutiao.com/api/pc/feed/?category=pc_profile_article"
-    micro_url = "https://www.toutiao.com/api/pc/feed/?category=pc_profile_ugc"
-    fans_url = "https://www.toutiao.com/api/pc/user/fans_stat"
     requests_mock.get(article_url, json=article_data)
-    requests_mock.get(micro_url, json=micro_data)
-    requests_mock.post(fans_url, json=fans_data)
+    requests_mock.get(pin_url, json=pin_data)
+    requests_mock.get(fans_url, json=fans_data)
     Toutiao().start()

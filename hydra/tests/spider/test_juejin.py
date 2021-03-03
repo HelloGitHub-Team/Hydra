@@ -24,10 +24,12 @@ with open(data_file, "r") as f:
     fans_data = json.load(f)
 
 
+article_url = "https://api.juejin.cn/content_api/v1/article/query_list"
+fans_url = "https://api.juejin.cn/user_api/v1/user/get"
+pin_url = "https://api.juejin.cn/content_api/v1/short_msg/query_list"
+
+
 def test_juejin_fail(requests_mock: Any) -> None:
-    article_url = "https://api.juejin.cn/content_api/v1/article/query_list"
-    fans_url = "https://api.juejin.cn/user_api/v1/user/get"
-    pin_url = "https://api.juejin.cn/content_api/v1/short_msg/query_list"
     requests_mock.post(article_url, json={"err_msg": "fail"})
     requests_mock.post(pin_url, json={"err_msg": "fail"})
     requests_mock.get(fans_url, json={"err_msg": "fail"})
@@ -35,9 +37,6 @@ def test_juejin_fail(requests_mock: Any) -> None:
 
 
 def test_juejin(requests_mock: Any) -> None:
-    article_url = "https://api.juejin.cn/content_api/v1/article/query_list"
-    fans_url = "https://api.juejin.cn/user_api/v1/user/get"
-    pin_url = "https://api.juejin.cn/content_api/v1/short_msg/query_list"
     requests_mock.post(article_url, json=article_data)
     requests_mock.post(pin_url, json=pin_data)
     requests_mock.get(fans_url, json=fans_data)

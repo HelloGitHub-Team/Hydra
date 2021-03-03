@@ -23,11 +23,12 @@ data_file = os.path.dirname(os.path.dirname(__file__)) + "/data/zhihu_account.js
 with open(data_file, "r") as f:
     account_data = json.load(f)
 
+article_url = "https://www.zhihu.com/api/v4/creators/creations/article"
+pin_url = "https://www.zhihu.com/api/v4/creators/creations/pin"
+fans_url = "https://www.zhihu.com/api/v4/creators/homepage"
+
 
 def test_zhihu_fail(requests_mock: Any) -> None:
-    article_url = "https://www.zhihu.com/api/v4/creators/creations/article"
-    pin_url = "https://www.zhihu.com/api/v4/creators/creations/pin"
-    fans_url = "https://www.zhihu.com/api/v4/creators/homepage"
     requests_mock.get(article_url, json={"data": None})
     requests_mock.get(pin_url, json={"data": None})
     requests_mock.get(fans_url, json={})
@@ -35,9 +36,6 @@ def test_zhihu_fail(requests_mock: Any) -> None:
 
 
 def test_zhihu(requests_mock: Any) -> None:
-    article_url = "https://www.zhihu.com/api/v4/creators/creations/article"
-    pin_url = "https://www.zhihu.com/api/v4/creators/creations/pin"
-    fans_url = "https://www.zhihu.com/api/v4/creators/homepage"
     requests_mock.get(article_url, json=article_data)
     requests_mock.get(pin_url, json=pin_data)
     requests_mock.get(fans_url, json=account_data)

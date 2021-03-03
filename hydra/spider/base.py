@@ -8,12 +8,12 @@
 import datetime
 import random
 import time
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import requests
 from requests.adapters import HTTPAdapter
 
-from hydra.utils import logger
+from hydra.config import logger
 
 # requests.packages.urllib3.disable_warnings()
 
@@ -27,6 +27,8 @@ class BaseSpider(object):
         self.get_date = datetime.datetime.now().strftime("%Y-%m-%d")
         self.session = requests.Session()
         self.session.mount("https://", HTTPAdapter(max_retries=3))
+        self.content_result: List[Dict[str, Any]] = []
+        self.account_result: Dict[str, Any] = {}
 
     @property
     def today(self) -> datetime.date:
@@ -65,14 +67,14 @@ class BaseSpider(object):
             else:
                 response = self.session.post(url, **kwargs)
             speed_time = round(time.time() - s_time, 2)
-            if response.status_code == 200:
+            if response.status_code < 400:
                 self.log.info(
                     f"{self.name} {method.upper()} {url} "
                     f"{speed_time}s {args_str} {response.status_code}"
                 )
                 return response
             else:
-                self.log.info(
+                self.log.error(
                     f"{self.name} {method.upper()} {url} {args_str}"
                     f" {response.status_code} {speed_time}s "
                     f"ERROR: {str(response.content)}."
@@ -82,6 +84,18 @@ class BaseSpider(object):
             self.log.exception(e)
             self.log.error(f"{method.upper()} {url} {args_str} FAIL. {e}")
             return None
+
+    def result_is_empty(self) -> bool:
+        """
+        检查结果是否为空，为空抛出异常
+        """
+        if not self.content_result or not self.account_result:
+            raise Exception(
+                f"Save {self.name} data empty,"
+                f" account: {len(self.account_result)},"
+                f" content:{len(self.content_result)}"
+            )
+        return False
 
     def _start(self) -> None:
         pass

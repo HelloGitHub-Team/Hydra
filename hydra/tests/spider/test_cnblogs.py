@@ -22,11 +22,12 @@ data_file = os.path.dirname(os.path.dirname(__file__)) + "/data/cnblogs_fans.txt
 with open(data_file, "r") as f:
     fans_data = f.read()
 
+article_url = "https://www.cnblogs.com/xueweihan/"
+rank_url = "https://www.cnblogs.com/xueweihan/ajax/sidecolumn.aspx"
+fans_url = "https://www.cnblogs.com/xueweihan/ajax/news.aspx"
+
 
 def test_cnblogs_fail(requests_mock: Any) -> None:
-    article_url = "https://www.cnblogs.com/xueweihan/"
-    rank_url = "https://www.cnblogs.com/xueweihan/ajax/sidecolumn.aspx"
-    fans_url = "https://www.cnblogs.com/xueweihan/ajax/news.aspx"
     requests_mock.get(article_url, status_code=404)
     requests_mock.get(rank_url, status_code=404)
     requests_mock.get(fans_url, status_code=404)
@@ -34,9 +35,6 @@ def test_cnblogs_fail(requests_mock: Any) -> None:
 
 
 def test_cnblogs_fail2(requests_mock: Any) -> None:
-    article_url = "https://www.cnblogs.com/xueweihan/"
-    rank_url = "https://www.cnblogs.com/xueweihan/ajax/sidecolumn.aspx"
-    fans_url = "https://www.cnblogs.com/xueweihan/ajax/news.aspx"
     requests_mock.get(article_url, text=article_data)
     requests_mock.get(rank_url, status_code=404)
     requests_mock.get(fans_url, text=fans_data)
@@ -44,9 +42,6 @@ def test_cnblogs_fail2(requests_mock: Any) -> None:
 
 
 def test_cnblogs(requests_mock: Any) -> None:
-    article_url = "https://www.cnblogs.com/xueweihan/"
-    rank_url = "https://www.cnblogs.com/xueweihan/ajax/sidecolumn.aspx"
-    fans_url = "https://www.cnblogs.com/xueweihan/ajax/news.aspx"
     requests_mock.get(article_url, text=article_data)
     requests_mock.get(rank_url, text=rank_data)
     requests_mock.get(fans_url, text=fans_data)

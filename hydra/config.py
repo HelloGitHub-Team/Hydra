@@ -6,9 +6,10 @@
 #   Date    :   2021-01-12 21:13
 #   Desc    :   配置
 import os
-from http.cookies import SimpleCookie
 
 import yaml
+
+from hydra.utils import init_log, make_cookie
 
 
 class Config(object):
@@ -18,9 +19,6 @@ class Config(object):
     filename = f".{run_mode}_env.yaml"
     filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), filename)
 
-    platform = {
-        "wechat": {"id": 1, "name": "wechat"},
-    }
     with open(filepath, "r", encoding="utf8") as f:
         conf = yaml.load(f, Loader=yaml.FullLoader)
 
@@ -39,14 +37,12 @@ class Config(object):
         return "wechat", cls.conf["wechat"]["account"], cls.conf["wechat"]["token"]
 
     @classmethod
-    def toutiao(cls) -> str:
-        return cls.conf["toutiao"]["user_token"]
+    def toutiao(cls) -> dict:
+        return make_cookie(cls.conf["toutiao"]["cookie"])
 
     @classmethod
     def zhihu(cls) -> dict:
-        cookie_dict = {}
-        cookie: SimpleCookie = SimpleCookie()
-        cookie.load(cls.conf["zhihu"]["cookie"])
-        for k, v in cookie.items():
-            cookie_dict[k] = v.value
-        return cookie_dict
+        return make_cookie(cls.conf["zhihu"]["cookie"])
+
+
+logger = init_log(Config.NAME)

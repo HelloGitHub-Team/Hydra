@@ -24,10 +24,12 @@ with open(data_file, "r") as f:
     fans_data = json.load(f)
 
 
+article_url = "https://www.newrank.cn/xdnphb/detail/v1/rank/article/lists"
+rank_url = "https://www.newrank.cn/xdnphb/detail/v1/rank/data/rankings"
+fans_url = "https://www.newrank.cn/xdnphb/detail/v1/rank/head/getEstimateFansNum"
+
+
 def test_wechat_fail(requests_mock: Any) -> None:
-    article_url = "https://www.newrank.cn/xdnphb/detail/v1/rank/article/lists"
-    rank_url = "https://www.newrank.cn/xdnphb/detail/v1/rank/data/rankings"
-    fans_url = "https://www.newrank.cn/xdnphb/detail/v1/rank/head/getEstimateFansNum"
     requests_mock.post(article_url, json={"success": False})
     requests_mock.post(rank_url, json={"success": False})
     requests_mock.post(fans_url, json={"success": False})
@@ -35,15 +37,11 @@ def test_wechat_fail(requests_mock: Any) -> None:
 
 
 def test_wechat_fail2(requests_mock: Any) -> None:
-    article_url = "https://www.newrank.cn/xdnphb/detail/v1/rank/article/lists"
     requests_mock.post(article_url, status_code=404)
     WeChat().start()
 
 
 def test_wechat(requests_mock: Any) -> None:
-    article_url = "https://www.newrank.cn/xdnphb/detail/v1/rank/article/lists"
-    rank_url = "https://www.newrank.cn/xdnphb/detail/v1/rank/data/rankings"
-    fans_url = "https://www.newrank.cn/xdnphb/detail/v1/rank/head/getEstimateFansNum"
     requests_mock.post(article_url, json=article_data)
     requests_mock.post(rank_url, json=rank_data)
     requests_mock.post(fans_url, json=fans_data)

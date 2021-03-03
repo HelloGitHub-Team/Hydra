@@ -5,7 +5,7 @@
 #   E-mail  :   595666367@qq.com
 #   Date    :   2021-02-22 15:36
 #   Desc    :   CSDN
-from typing import Any, Dict, List, Tuple
+import datetime
 
 from requests_html import HTML
 
@@ -23,68 +23,83 @@ class Csdn(BaseSpider):
     def __init__(self) -> None:
         super(Csdn, self).__init__()
         self.platform = "csdn"
-        self.blog_url = "https://blog.csdn.net/a419240016"
+        self.user_id = "a419240016"
 
-    def get_articles_list(self) -> Tuple[list, dict]:
-        """
-        获取文章数据
-        """
-        articles_result: List[Dict[str, Any]] = []
-        rs = self.request_data(url=self.blog_url)
-        if rs is None:
-            return [], {}
-        html = HTML(html=rs.text)
-        div_list = html.xpath(
-            '//*[@id="articleMeList-blog"]/div[@class="article-list"]/div'
-        )
-        for div_item in div_list:
-            is_original = bool(div_item.xpath("//h4/a/span")[0].text == "原创")
-            url = div_item.xpath("//h4/a")[0].attrs["href"]
-            title = "".join(div_item.xpath("//h4/a/text()")).strip()
-            div_item.xpath('//div[@class="info-box d-flex align-content-center"]')
-            publish_time = div_item.xpath('//span[@class="date"]')[0].text
-            publish_date = publish_time.split(" ")[0]
-            clicks_count = div_item.xpath('//span[@class="read-num"]')[0].text
-            try:
-                comment_count = div_item.xpath('//span[@class="read-num"]')[1].text
-            except Exception:
-                comment_count = 0
-            source_id = div_item.attrs["data-articleid"]
-            articles_result.append(
+    def get_articles(self) -> None:
+        url = "https://blog.csdn.net/community/home-api/v1/get-business-list"
+        articles = []
+        params = {
+            "page": 1,
+            "size": 20,
+            "businessType": "blog",
+            "noMore": "false",
+            "username": self.user_id,
+        }
+        rs = self.request_data(url=url, params=params)
+        if rs:
+            json_data = rs.json()
+            articles = json_data.get("data", {}).get("list", [])
+            if not articles:
+                return
+        for article in articles:
+            publish_time = datetime.datetime.strptime(
+                article["postTime"], "%Y-%m-%d %H:%M:%S"
+            )
+            self.content_result.append(
                 {
                     "content_type": "article",
                     "platform": self.platform,
-                    "source_id": source_id,
-                    "clicks_count": clicks_count,
-                    "comment_count": comment_count,
-                    "is_original": is_original,
-                    "summary": title,
-                    "url": url,
+                    "source_id": article["articleId"],
+                    "like_count": article["diggCount"],
+                    "clicks_count": article["viewCount"],
+                    "comment_count": article["commentCount"],
+                    "summary": article["title"],
+                    "url": article["url"],
                     "publish_time": publish_time,
-                    "publish_date": publish_date,
+                    "publish_date": publish_time.date(),
                     "get_time": self.get_time,
                     "update_time": self.get_time,
                 }
             )
-        self.log.info(f"Download {len(articles_result)} article data finish.")
-        profile_div = html.xpath(
-            '//*[@id="asideProfile"]/div[@class="data-info d-flex item-tiling"]/dl'
+        self.log.info(f"Download {len(articles)} article data finish.")
+
+    def get_account_info(self) -> None:
+        """
+        获取账户数据
+        """
+        url = "https://hellogithub.blog.csdn.net/"
+        rs = self.request_data(url=url, params={"type": "blog"})
+        if rs is None:
+            return
+        html = HTML(html=rs.text)
+        rank = int(
+            html.xpath('//div[@class="user-profile-head-info-b"]' "/ul/li/a/div")[
+                2
+            ].text.replace(",", "")
         )
-        account_result: Dict[str, Any] = {
+        fans = int(
+            html.xpath('//div[@class="user-profile-head-info-b"]' "/ul/li/a/div")[
+                4
+            ].text.replace(",", "")
+        )
+        self.account_result = {
             "platform": self.platform,
-            "fans": int(profile_div[6].attrs["title"]),
-            "value": int(profile_div[5].attrs["title"]),
-            "rank": int(profile_div[2].attrs["title"]),
+            "fans": fans,
+            "rank": rank,
             "get_time": self.get_time,
             "update_date": self.get_date,
         }
-        return articles_result, account_result
+        self.log.info(f"Download {self.platform} account data finish.")
 
     def _start(self) -> None:
-        articles_list, account_info = self.get_articles_list()
-        if not articles_list or not account_info:
-            raise Exception
-        with get_db() as db:
-            insert_account(db, account_info)
-            for article in articles_list:
-                upinsert_content(db, article)
+        self.get_articles()
+        self.get_account_info()
+        if not self.result_is_empty():
+            with get_db() as db:
+                insert_account(db, self.account_result)
+                for article in self.content_result:
+                    upinsert_content(db, article)
+        self.log.info(
+            f"Save {self.name} content: {len(self.content_result)} "
+            f"| account: {self.account_result} data finish."
+        )

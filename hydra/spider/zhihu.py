@@ -6,7 +6,6 @@
 #   Date    :   2021-02-28 23:33
 #   Desc    :   知乎
 import datetime
-from typing import Any, Dict, List
 
 from hydra.config import Config
 from hydra.db.base import get_db
@@ -21,26 +20,24 @@ class Zhihu(BaseSpider):
         self.headers = {"content-type": "application/json"}
         self.cookie = Config.zhihu()
 
-    def get_articles_list(self) -> list:
+    def get_articles(self) -> None:
         """
         获取文章数据
-        https://www.zhihu.com/api/v4/creators/creations/article
         """
         url = "https://www.zhihu.com/api/v4/creators/creations/article"
-        articles_result: List[Dict[str, Any]] = []
         articles = []
         rs = self.request_data(url=url, cookies=self.cookie)
         if rs:
             json_data = rs.json()
             articles = json_data.get("data", [])
             if not articles:
-                return articles_result
+                return
         for article in articles:
             article_data = article["data"]
             article_reaction = article["reaction"]
             source_id = article_data["id"]
             publish_time = datetime.datetime.fromtimestamp(article_data["created_time"])
-            articles_result.append(
+            self.content_result.append(
                 {
                     "content_type": "article",
                     "platform": self.platform,
@@ -57,29 +54,26 @@ class Zhihu(BaseSpider):
                     "update_time": self.get_time,
                 }
             )
-        self.log.info(f"Download {len(articles_result)} article data finish.")
-        return articles_result
+        self.log.info(f"Download {len(articles)} article data finish.")
 
-    def get_pin_list(self) -> list:
+    def get_pins(self) -> None:
         """
         获取想法的数据
-        https://www.zhihu.com/api/v4/creators/creations/pin
         """
         url = "https://www.zhihu.com/api/v4/creators/creations/pin"
-        pin_result: List[Dict[str, Any]] = []
         pin_list = []
         rs = self.request_data(url=url, cookies=self.cookie)
         if rs:
             json_data = rs.json()
             pin_list = json_data.get("data", [])
             if not pin_list:
-                return pin_result
+                return
         for pin in pin_list:
             pin_data = pin["data"]
             pin_reaction = pin["reaction"]
             source_id = pin_data["id"]
             publish_time = datetime.datetime.fromtimestamp(pin_data["created_time"])
-            pin_result.append(
+            self.content_result.append(
                 {
                     "content_type": "pin",
                     "platform": self.platform,
@@ -96,40 +90,35 @@ class Zhihu(BaseSpider):
                     "update_time": self.get_time,
                 }
             )
-        self.log.info(f"Download {len(pin_result)} pin data finish.")
-        return pin_result
+        self.log.info(f"Download {len(pin_list)} pin data finish.")
 
-    def get_account_info(self) -> dict:
+    def get_account_info(self) -> None:
         url = "https://www.zhihu.com/api/v4/creators/homepage"
         json_data = {}
-        account_result: Dict[str, Any] = {
-            "platform": self.platform,
-            "fans": -1,
-            "value": -1,
-            "get_time": self.get_time,
-            "update_date": self.get_date,
-        }
         rs = self.request_data(url=url, cookies=self.cookie)
         if rs:
             json_data = rs.json()
             if not json_data:
-                return account_result
-        account_result["value"] = json_data.get("level", {}).get("score", -1)
-        account_result["fans"] = json_data.get("statistics", {}).get(
-            "total_follower_count", -1
-        )
+                return
+        self.account_result = {
+            "platform": self.platform,
+            "fans": json_data.get("statistics", {}).get("total_follower_count", -1),
+            "value": json_data.get("level", {}).get("score", -1),
+            "get_time": self.get_time,
+            "update_date": self.get_date,
+        }
         self.log.info(f"Download {self.platform} account data finish.")
-        return account_result
 
     def _start(self) -> None:
-        articles_list = self.get_articles_list()
-        pin_list = self.get_pin_list()
-        account_dict = self.get_account_info()
-        if not articles_list or not pin_list or not account_dict:
-            raise Exception
-        with get_db() as db:
-            insert_account(db, account_dict)
-            for article in articles_list:
-                upinsert_content(db, article)
-            for pin in pin_list:
-                upinsert_content(db, pin)
+        self.get_articles()
+        self.get_pins()
+        self.get_account_info()
+        if not self.result_is_empty():
+            with get_db() as db:
+                insert_account(db, self.account_result)
+                for article in self.content_result:
+                    upinsert_content(db, article)
+        self.log.info(
+            f"Save {self.name} content: {len(self.content_result)} "
+            f"| account: {self.account_result} data finish."
+        )

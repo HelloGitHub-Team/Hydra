@@ -8,7 +8,7 @@
 import hashlib
 from operator import itemgetter
 from random import Random
-from typing import Any, Dict, List
+from typing import Any
 
 from hydra.config import Config
 from hydra.db.base import get_db
@@ -20,6 +20,7 @@ class WeChat(BaseSpider):
     def __init__(self) -> None:
         super(WeChat, self).__init__()
         self.platform, self.account, self.token = Config.wechat()
+        self.cookies = {"token": self.token}
 
     @staticmethod
     def random_str(random_len: int = 9) -> str:
@@ -69,23 +70,21 @@ class WeChat(BaseSpider):
         :param method: HTTP method
         """
         url = "https://www.newrank.cn" + url_path
-        cookies = {"token": self.token}
         kwargs.update({"account": self.account})
         params = self.generate_params(url_path, kwargs)
         response = self.request_data(
-            url=url, method=method, params=params, cookies=cookies
+            url=url, method=method, params=params, cookies=self.cookies
         )
         if response:
             return response.json()
         return dict()
 
-    def get_account_info(self) -> list:
+    def get_account_info(self) -> None:
         rank_path = "/xdnphb/detail/v1/rank/data/rankings"
         fans_path = "/xdnphb/detail/v1/rank/head/getEstimateFansNum"
 
         rank_data = self.request_newrank(rank_path, type="day")
         fans_data = self.request_newrank(fans_path)
-        rank_result: List[Dict[str, Any]] = []
 
         if (
             not rank_data
@@ -93,25 +92,20 @@ class WeChat(BaseSpider):
             or not rank_data["success"]
             or not fans_data["success"]
         ):
-            self.log.error(f"POST {rank_path} or {fans_path}: No Data.")
-            return rank_result
+            return
+        rank = rank_data["value"][-1]
         fans = int(fans_data["value"]["fullAvg_read"].replace(",", ""))
-        rank_list = rank_data["value"]
-        for rank_item in rank_list:
-            rank_result.append(
-                {
-                    "platform": self.platform,
-                    "fans": fans,
-                    "value": rank_item.get("log1p_mark", -1),
-                    "rank": rank_item.get("rank_position", -1),
-                    "update_date": rank_item.get("rank_date", None),
-                    "get_time": self.get_time,
-                }
-            )
+        self.account_result = {
+            "platform": self.platform,
+            "fans": fans,
+            "value": int(float(rank.get("log1p_mark", -1))),
+            "rank": rank.get("rank_position", -1),
+            "update_date": rank.get("rank_date", None),
+            "get_time": self.get_time,
+        }
         self.log.info(f"Download {self.platform} account data finish.")
-        return rank_result
 
-    def get_articles_list(self) -> list:
+    def get_articles(self) -> None:
         """
         获取公众号文章的数据
         :return:
@@ -128,15 +122,14 @@ class WeChat(BaseSpider):
         """
         url_path = "/xdnphb/detail/v1/rank/article/lists"
         articles_data = self.request_newrank(url_path)
-        articles_result: List[Dict[str, Any]] = []
         if not articles_data or not articles_data["success"]:
-            self.log.error(f"POST {url_path}: No Data.")
-            return articles_result
+            return
         articles_list = articles_data["value"]["articles"]
+        article_count = 0
         for day_articles in articles_list:
             for article in day_articles:
                 publish_date = article.get("publicTime").split(" ")[0]
-                articles_result.append(
+                self.content_result.append(
                     {
                         "content_type": "article",
                         "platform": self.platform,
@@ -154,16 +147,18 @@ class WeChat(BaseSpider):
                         "get_time": self.get_time,
                     }
                 )
-        self.log.info(f"Download {len(articles_result)} article data finish.")
-        return articles_result
+                article_count += 1
+        self.log.info(f"Download {article_count} article data finish.")
 
     def _start(self) -> None:
-        articles_list = self.get_articles_list()
-        account_info_list = self.get_account_info()
-        if not articles_list or not account_info_list:
-            raise Exception
-        with get_db() as db:
-            for account_info in account_info_list:
-                insert_account(db, account_info)
-            for article in articles_list:
-                upinsert_content(db, article)
+        self.get_articles()
+        self.get_account_info()
+        if not self.result_is_empty():
+            with get_db() as db:
+                insert_account(db, self.account_result)
+                for article in self.content_result:
+                    upinsert_content(db, article)
+        self.log.info(
+            f"Save {self.name} content: {len(self.content_result)} "
+            f"| account: {self.account_result} data finish."
+        )

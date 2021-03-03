@@ -7,7 +7,6 @@
 #   Desc    :   掘金
 import json
 from datetime import datetime
-from typing import Any, Dict, List
 
 from hydra.db.base import get_db
 from hydra.db.curd import insert_account, upinsert_content
@@ -25,19 +24,17 @@ class Juejin(BaseSpider):
         self.platform = "juejin"
         self.user_id = "1574156384091320"
         self.headers = {"Content-Type": "application/json"}
-        self.content_result: List[Dict[str, Any]] = []
-        self.account_result: Dict[str, Any] = {}
 
-    def get_articles_list(self) -> None:
+    def get_articles(self) -> None:
         """
         获取文章数据
         """
-        json_data = {}
         url = "https://api.juejin.cn/content_api/v1/article/query_list"
         payload = {"user_id": self.user_id, "sort_type": 2}
         rs = self.request_data(
             "POST", url=url, data=json.dumps(payload), headers=self.headers
         )
+        json_data = {}
         if rs:
             json_data = rs.json()
             if not json_data.get("data") or json_data["err_msg"] != "success":
@@ -68,25 +65,24 @@ class Juejin(BaseSpider):
         self.log.info(f"Download {len(data)} article data finish.")
 
     def get_account_info(self) -> None:
-        json_data = {}
-        self.account_result = {
-            "platform": self.platform,
-            "get_time": self.get_time,
-            "update_date": self.get_date,
-        }
-        params = {"aid": 2608, "user_id": self.user_id, "not_self": 1}
         url = "https://api.juejin.cn/user_api/v1/user/get"
+        params = {"aid": 2608, "user_id": self.user_id, "not_self": 1}
         rs = self.request_data(url=url, params=params)
+        json_data = {}
         if rs:
             json_data = rs.json()
             if json_data.get("err_msg") != "success":
                 return
-        fans = str(json_data.get("data", {}).get("follower_count", "-1"))
-        self.account_result["fans"] = fans
-        self.account_result["value"] = json_data.get("data", {}).get("power", "-1")
+        self.account_result = {
+            "platform": self.platform,
+            "fans": int(json_data.get("data", {}).get("follower_count", -1)),
+            "value": json_data.get("data", {}).get("power", -1),
+            "get_time": self.get_time,
+            "update_date": self.get_date,
+        }
         self.log.info(f"Download {self.platform} account data finish.")
 
-    def get_hotspot_list(self) -> None:
+    def get_pins(self) -> None:
         """
         获取沸点数据
         """
@@ -123,19 +119,15 @@ class Juejin(BaseSpider):
         self.log.info(f"Download {len(data)} pin data finish.")
 
     def _start(self) -> None:
-        self.get_articles_list()
-        self.get_hotspot_list()
+        self.get_articles()
+        self.get_pins()
         self.get_account_info()
-        if not self.account_result or not self.content_result:
-            raise Exception(
-                f"Empty account: {self.account_result},"
-                f" content: {self.content_result[:3]}"
-            )
-        with get_db() as db:
-            insert_account(db, self.account_result)
-            for item in self.content_result:
-                upinsert_content(db, item)
+        if not self.result_is_empty():
+            with get_db() as db:
+                insert_account(db, self.account_result)
+                for item in self.content_result:
+                    upinsert_content(db, item)
         self.log.info(
-            f"Save {len(self.content_result)} content "
-            f"| account: {self.account_result} data."
+            f"Save {self.name} content: {len(self.content_result)} "
+            f"| account: {self.account_result} data finish."
         )

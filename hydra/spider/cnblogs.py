@@ -5,7 +5,6 @@
 #   E-mail  :   595666367@qq.com
 #   Date    :   2021-02-22 15:36
 #   Desc    :   博客园
-from typing import Any, Dict, List
 
 from requests_html import HTML
 
@@ -25,14 +24,13 @@ class Cnblogs(BaseSpider):
         self.platform = "cnblogs"
         self.blog_url = "https://www.cnblogs.com/xueweihan/"
 
-    def get_articles_list(self) -> list:
+    def get_articles(self) -> None:
         """
         获取文章数据
         """
-        articles_result: List[Dict[str, Any]] = []
         rs = self.request_data(url=self.blog_url)
         if rs is None:
-            return articles_result
+            return
         html = HTML(html=rs.text)
         div_list = html.xpath('//*[@id="mainContent"]/div/div[@class="day"]')
         for div_item in div_list:
@@ -64,7 +62,7 @@ class Cnblogs(BaseSpider):
                     '//div[@class="postDesc"]/span[@class="post-comment-count"]'
                 )[0].search("评论({})")[0]
             )
-            articles_result.append(
+            self.content_result.append(
                 {
                     "content_type": "article",
                     "platform": self.platform,
@@ -80,11 +78,11 @@ class Cnblogs(BaseSpider):
                     "update_time": self.get_time,
                 }
             )
-        self.log.info(f"Download {len(articles_result)} article data finish.")
-        return articles_result
+        self.log.info(f"Download {len(div_list)} article data finish.")
 
-    def get_account_info(self) -> dict:
-        account_result: Dict[str, Any] = {
+    def get_account_info(self) -> None:
+        url = "https://www.cnblogs.com/xueweihan/ajax/news.aspx"
+        self.account_result = {
             "platform": self.platform,
             "fans": -1,
             "value": -1,
@@ -93,11 +91,11 @@ class Cnblogs(BaseSpider):
             "update_date": self.get_date,
         }
 
-        rs = self.request_data(url="https://www.cnblogs.com/xueweihan/ajax/news.aspx")
+        rs = self.request_data(url=url)
         if rs is None:
-            return {}
+            return
         html = HTML(html=rs.text)
-        account_result["fans"] = int(
+        self.account_result["fans"] = int(
             html.xpath(
                 '//*[@id="profile_block"]/a[@href="'
                 'https://home.cnblogs.com/u/xueweihan/followers/"]'
@@ -107,27 +105,29 @@ class Cnblogs(BaseSpider):
             url="https://www.cnblogs.com/xueweihan/ajax/sidecolumn.aspx"
         )
         if rs is None:
-            return {}
+            return
         html = HTML(html=rs.text)
-        account_result["value"] = int(
+        self.account_result["value"] = int(
             html.xpath('//*[@id="sidebar_scorerank"]/div/ul/li' '[@class="liScore"]')[
                 0
             ].text.replace("积分 - ", "")
         )
-        account_result["rank"] = int(
+        self.account_result["rank"] = int(
             html.xpath('//*[@id="sidebar_scorerank"]/div/ul/li' '[@class="liRank"]')[
                 0
             ].text.replace("排名 - ", "")
         )
         self.log.info(f"Download {self.platform} account data finish.")
-        return account_result
 
     def _start(self) -> None:
-        articles_list = self.get_articles_list()
-        account_info = self.get_account_info()
-        if not articles_list or not account_info:
-            raise Exception
-        with get_db() as db:
-            insert_account(db, account_info)
-            for article in articles_list:
-                upinsert_content(db, article)
+        self.get_articles()
+        self.get_account_info()
+        if not self.result_is_empty():
+            with get_db() as db:
+                insert_account(db, self.account_result)
+                for article in self.content_result:
+                    upinsert_content(db, article)
+        self.log.info(
+            f"Save {self.name} content: {len(self.content_result)} "
+            f"| account: {self.account_result} data finish."
+        )

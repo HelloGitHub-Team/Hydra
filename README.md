@@ -8,8 +8,6 @@
 
 ## 一、运行项目
 
-依赖：node v15.8.0
-
 创建配置文件：[.local_env.yaml](/doc/local_env.yaml)
 
 1. 安装 [pyenv](https://github.com/pyenv/pyenv#installation)
