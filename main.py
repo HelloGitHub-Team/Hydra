@@ -7,7 +7,13 @@
 #   Desc    :   运行
 import argparse
 
+import sentry_sdk
+
 from hydra.spider import *
+from hydra.config import Config
+
+sentry_config = Config.sentry_config()
+sentry_sdk.init(**sentry_config)
 
 SPIDER_MAP = {
     "wechat": WeChat(), "cnblogs": Cnblogs(), "toutiao": Toutiao(),
@@ -27,5 +33,8 @@ if __name__ == "__main__":
     spider = SPIDER_MAP.get(name)
     if spider:
         spider.start()
+    elif name == "all":
+        for fi_spider in SPIDER_MAP.values():
+            fi_spider.start()
     else:
         print("spider name error.")

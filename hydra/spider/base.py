@@ -26,7 +26,7 @@ class BaseSpider(object):
         self.get_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.get_date = datetime.datetime.now().strftime("%Y-%m-%d")
         self.session = requests.Session()
-        self.session.mount("https://", HTTPAdapter(max_retries=3))
+        self.session.mount("https://", HTTPAdapter(max_retries=1))
         self.content_result: List[Dict[str, Any]] = []
         self.account_result: Dict[str, Any] = {}
 
