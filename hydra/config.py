@@ -15,7 +15,7 @@ from hydra.utils import init_log, make_cookie
 class Config(object):
     NAME = "Hydra"
 
-    run_mode = os.getenv("hydra_env", "local")
+    run_mode = os.getenv(NAME.upper(), "local")
     filename = f".{run_mode}_env.yaml"
     filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), filename)
 

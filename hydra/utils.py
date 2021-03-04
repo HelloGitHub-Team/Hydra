@@ -20,7 +20,9 @@ def init_log(name: str, log_type: str = None) -> Logger:
     if not os.path.exists(log_path):
         os.mkdir(log_path)
     handler: BaseRotatingHandler = RotatingFileHandler(
-        os.path.join(log_path, "{}.log".format(name)), encoding="utf-8"
+        os.path.join(log_path, "{}.log".format(name)),
+        encoding="utf-8",
+        maxBytes=1000000 * 100,
     )
     if log_type == "time":
         handler = TimedRotatingFileHandler(
@@ -29,7 +31,6 @@ def init_log(name: str, log_type: str = None) -> Logger:
             backupCount=10,
             encoding="utf-8",
         )
-
     log_object = getLogger(name)
     formatter = Formatter("%(name)s %(module)s  %(asctime)s %(levelname)s %(message)s")
     stream_hdr = StreamHandler()

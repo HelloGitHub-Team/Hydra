@@ -19,7 +19,7 @@ data_file = os.path.dirname(os.path.dirname(__file__)) + "/data/csdn_article.jso
 with open(data_file, "r") as f:
     article_data = json.load(f)
 
-url = "https://hellogithub.blog.csdn.net/"
+url = "https://blog.csdn.net/a419240016"
 article_url = (
     "https://blog.csdn.net/community/home-api/v1/get-business-list?"
     "page=1&size=20&businessType=blog&noMore=false&username=a419240016"

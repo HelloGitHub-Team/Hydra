@@ -136,3 +136,7 @@ dmypy.json
 
 # node
 node_modules/
+
+# docker shell
+docker.sh
+deploy.md

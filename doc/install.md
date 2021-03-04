@@ -1,7 +1,10 @@
 ## 一、命令
-解释和可能会用到的命令：
 
-1. 保证 Python 版本为 3.9.1：pyenv local 3.9.1
+你可能会用到的命令：
+
+1. 通过 pyenv 安装 Python3.9.1：
+    - 安装 [pyenv](https://github.com/pyenv/pyenv#installation)
+    - 安装并切换当前目录的 Python 版本：`pyenv local 3.9.1`
     - `pyenv versions`：列出所有的 Python 版本
     - `pyenv install/uninstall 版本号`：安装对应的版本
     - `pyenv shell/global/local 版本号`：shell/切换全局/本地的 Python 版本（shell > local > global）
@@ -12,13 +15,9 @@
     - `poetry env use 环境绝对路径`：切换环境
     - `poetry add 库的名称`：增加库到环境中
     - `poetry run 命令`：可以不切换环境直接通过命令运行项目
-3. 安装 commit 钩子：`poetry run pre-commit install`
-4. 手动运行代码风格检测和钩子：
-    - 检查代码风格：`sh shell/lint.sh`
-    - 自动修改代码：`sh shell/format.sh`
-    - 钩子：`pre-commit run --all-files`
 
-    
+如未解决，欢迎提交 [issues](https://github.com/HelloGitHub-Team/Hydra/issues/new) 提问。 
+
 ## 二、依赖说明
 
 ### 依赖管理

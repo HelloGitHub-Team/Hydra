@@ -14,11 +14,6 @@ from hydra.db.curd import insert_account, upinsert_content
 from hydra.spider.base import BaseSpider
 
 
-"""
-https://hellogithub.blog.csdn.net/
-"""
-
-
 class Csdn(BaseSpider):
     def __init__(self) -> None:
         super(Csdn, self).__init__()
@@ -45,11 +40,17 @@ class Csdn(BaseSpider):
             publish_time = datetime.datetime.strptime(
                 article["postTime"], "%Y-%m-%d %H:%M:%S"
             )
+            article_type = int(article.get("type", 0))
+            if article_type == 1:
+                is_original = 1
+            else:
+                is_original = 0
             self.content_result.append(
                 {
                     "content_type": "article",
                     "platform": self.platform,
                     "source_id": article["articleId"],
+                    "is_original": is_original,
                     "like_count": article["diggCount"],
                     "clicks_count": article["viewCount"],
                     "comment_count": article["commentCount"],
@@ -67,7 +68,7 @@ class Csdn(BaseSpider):
         """
         获取账户数据
         """
-        url = "https://hellogithub.blog.csdn.net/"
+        url = f"https://blog.csdn.net/{self.user_id}"
         rs = self.request_data(url=url, params={"type": "blog"})
         if rs is None:
             return

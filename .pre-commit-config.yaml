@@ -17,5 +17,5 @@ repos:
         name: test
         stages: [commit]
         language: system
-        entry: poetry run sh shell/test.sh
+        entry: poetry run bash shell/test.sh
         types: [python]

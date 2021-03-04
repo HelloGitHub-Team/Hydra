@@ -16,57 +16,23 @@ Hydra 力求用最简单的代码实现功能，仅实现了爬虫最实用的�
 
 ## 一、运行
 
-> 基于 Python3 实现
+> 基于 Python 3.9.1 实现，理论上支持 3.7.5+
 
-在项目根目录创建配置文件，[.local_env.yaml](/doc/local_env.yaml)。然后：
+首先，下载项目：`git clone` or [点击下载 zip 包](https://github.com/HelloGitHub-Team/Hydra/archive/main.zip)
 
-1. 安装 [pyenv](https://github.com/pyenv/pyenv#installation)
-2. 安装并切换当前目录的 Python 版本：`pyenv local 3.9.1`
-3. 安装 poetry：`pip3 install poetry`
-4. 安装依赖：在项目根目录执行 `poetry install --no-root`
-5. 运行单个爬虫：`poetry run python main.py wechat|cnblogs|toutiao|csdn|zhihu|juejin|jike`
-    - 检查代码风格等：`shell/lint.sh`
-    - 格式化代码等：`shell/format.sh`
-    - 测试：`shell/test.sh`
-6. 启动定时：`poetry run python run.py`
+然后，在项目根目录创建配置文件，[.local_env.yaml](/doc/local_env.yaml)。
 
-[更多说明](/doc/install.md)
+最后，把玩起来吧！
+
+1. 安装 poetry：`pip install poetry`
+2. 安装依赖：在项目根目录执行 `poetry install --no-root`
+3. 运行单个爬虫：`poetry run python main.py wechat|cnblogs|toutiao|csdn|zhihu|juejin|jike`
+
+运行遇到问题和更多说明[点这里](/doc/install.md)，贡献代码[看这里](/doc/contribution.md)
 
 ## 二、效果
 
 
-## 三、结构
-```
-.
-├── doc
-│   ├── install.md  // 更详细的说明
-│   └── local_env.yaml  // 配置参数模版
-├── hydra  // 源码在这里
-│   ├── config.py  // 配置类
-│   ├── db  // 数据库操作
-│   │   ├── base.py  
-│   │   ├── curd.py
-│   │   └── model.py
-│   ├── spider  // 爬虫
-│   │   ├── base.py  // 基类
-│   │   ├── cnblogs.py
-│   │   ├── csdn.py
-│   │   ├── jike.py
-│   │   ├── juejin.py
-│   │   ├── toutiao.py
-│   │   ├── wechat.py
-│   │   └── zhihu.py
-│   ├── tests  // 测试
-│   └── utils.py  // 工具类
-├── logs  // 日志
-├── main.py  // 命令行启动（单个）
-├── run.py  // 常驻启动（全部）
-├── pyproject.toml  // 依赖
-└── shell
-    ├── format.sh  // 自动修改代码格式等
-    ├── lint.sh  // 类型和代码格式检测
-    └── test.sh  // 运行测试
-```
 
-## 四、声明
+## 三、声明
 <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh"><img alt="知识共享许可协议" style="border-width: 0" src="https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png"></a><br>本作品采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">署名-非商业性使用-禁止演绎 4.0 国际</a> 进行许可。

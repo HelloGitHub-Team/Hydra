@@ -7,13 +7,7 @@
 #   Desc    :   运行
 import argparse
 
-import sentry_sdk
-
 from hydra.spider import *
-from hydra.config import Config
-
-sentry_config = Config.sentry_config()
-sentry_sdk.init(**sentry_config)
 
 SPIDER_MAP = {
     "wechat": WeChat(), "cnblogs": Cnblogs(), "toutiao": Toutiao(),
