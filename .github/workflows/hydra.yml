@@ -1,0 +1,57 @@
+name: hydra
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+#    strategy:
+#      matrix:
+#        python-version: [3.9.1]
+#    services:
+#      mysql:
+#        image: mysql:5.7
+#        env:
+#          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+#          MYSQL_DATABASE: hellogithub
+#        ports:
+#          - 3306
+#        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - uses: actions/checkout@v2
+      - uses: finnp/create-file-action@master
+        env:
+          FILE_NAME: "fileName.txt"
+          FILE_DATA: ${{ secrets.LOCAL_ENV }}
+      - name: Read package.json
+        id: package
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: fileName.txt
+      - name: Echo local_env.yaml
+        run: echo ${{ steps.package.outputs.content }}
+
+#    - uses: actions/checkout@v2
+#    - name: Set up Python ${{ matrix.python-version }}
+#      uses: actions/setup-python@v2
+#      with:
+#        python-version: ${{ matrix.python-version }}
+#
+#    - run: 'echo "$LOCAL_ENV" > .local_env.yaml'
+#      shell: bash
+#      env:
+#        LOCAL_ENV: ${{ secrets.LOCAL_ENV }}
+#    - name: Install dependencies
+#      run: |
+#        pip install poetry==1.1.4 && poetry config virtualenvs.create false --local
+#        poetry install --no-root
+#    - name: update coverage
+#      env:
+#        CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+#      run: |
+#        pytest --cov=hydra --cov-report=xml hydra/tests --cov-fail-under=95
+#        python-codacy-coverage -r coverage.xml
