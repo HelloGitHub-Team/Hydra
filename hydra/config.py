@@ -20,7 +20,7 @@ class Config(object):
     filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), filename)
 
     with open(filepath, "r", encoding="utf8") as f:
-        conf = yaml.load(f, Loader=yaml.FullLoader)
+        conf = yaml.safe_load(f)
 
     @classmethod
     def sentry_config(cls) -> dict:

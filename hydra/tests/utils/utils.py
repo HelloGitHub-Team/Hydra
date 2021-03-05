@@ -46,6 +46,6 @@ def random_date_str() -> str:
 
 def random_gbk2312(k: int = 4) -> str:
     result = ""
-    for i in range(k):
+    for _ in range(k):
         result += chr(random.randint(0x4E00, 0x9FBF))
     return result

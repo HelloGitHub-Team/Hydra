@@ -25,7 +25,9 @@ Hydra 力求用最简单的代码实现功能，聚合多平台 HG 的数据。
 最后，把玩起来吧！
 
 1. 安装 poetry：`pip install poetry`
+
 2. 安装依赖：在项目根目录执行 `poetry install --no-root`
+
 3. 运行单个爬虫：`poetry run python main.py wechat|cnblogs|toutiao|csdn|zhihu|juejin|jike`
 
 运行遇到问题和更多说明[点这里](/doc/install.md)，贡献代码[看这里](/doc/contribute.md)
@@ -33,7 +35,7 @@ Hydra 力求用最简单的代码实现功能，聚合多平台 HG 的数据。
 ## 二、展示
 比如：查看某一日发布的原创文章数据
 
-```sql
+```
 SELECT
 	summary ,
 	clicks_count ,

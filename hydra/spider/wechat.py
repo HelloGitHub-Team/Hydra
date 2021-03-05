@@ -32,7 +32,7 @@ class WeChat(BaseSpider):
         chars = "abcdefghijklmnopqrstuvwxyz0123456789"
         length = len(chars) - 1
         random = Random()
-        for i in range(random_len):
+        for _ in range(random_len):
             result += chars[random.randint(0, length)]
         return result
 
