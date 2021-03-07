@@ -2,13 +2,16 @@
 
 <p align="center">
   <img width="75%" src="https://cdn.jsdelivr.net/gh/HelloGitHub-Team/Hydra@main/doc/cover.png"/>
-  <br><strong>简单绝不简陋的 Python3 爬虫项目。</strong>
+  <br><img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/HelloGitHub-Team/Hydra/hydra?style=flat-square">
+  <img alt="Codacy grade" src="https://img.shields.io/codacy/grade/e11ce1e341554699ad523dbfe75be9c6?style=flat-square">
+  <img alt="Codacy coverage" src="https://img.shields.io/codacy/coverage/e11ce1e341554699ad523dbfe75be9c6?style=flat-square">
+  <br><strong>简单但绝不简陋的 Python3 爬虫项目。</strong>
   <br>参考<a href="https://mp.weixin.qq.com/s/K4RGr5NqMFAUKtB0KFPV5g">「建立完美的 Python 项目」</a> 创建 
 </p>
 
-Hydra 力求用最简单的代码实现功能，聚合多平台 HG 的数据。
+Hydra 力求用最简单的代码实现聚合 HG 多平台的数据。
 
-从本项目中你可以看到：**熟悉的 [Python 基础语法](https://github.com/521xueweihan/python)**、**如何编写爬虫**、**操作数据库**、**常用第三库**、**分析网页**、**解析接口**、**编写单元测试**、**mock 请求**、**异常监控和管理**、**保证代码质量的自动化** 等实战应用。
+从本项目中你可以看到：**熟悉的 [Python 基础语法](https://github.com/521xueweihan/python)**、**如何编写爬虫**、**操作数据库**、**常用第三库**、**分析网页**、**解析接口**、**编写单元测试**、**mock 请求**、**异常监控和管理**、**保证代码质量的自动化**、**GitHub Action** 等实战应用。
 
 此项目是汇集「HelloGitHub」在每个平台的账号和内容数据，方便我们的作者们看到自己作品的数据（[投稿吗？](https://www.yuque.com/docs/share/bf781d29-cc94-44dd-b226-9d70fa38fa1c)）。支持平台：[博客园](https://www.cnblogs.com/xueweihan/)、[头条](https://www.toutiao.com/c/user/token/MS4wLjABAAAAigrrKo-3rjLpxaH4Go3BrZRqHTIhLW3e30QjfFXgzNQ/)、[知乎](https://www.zhihu.com/people/xueweihan)、[掘金](https://juejin.cn/user/1574156384091320)、[即刻](https://web.okjike.com/u/ff31a838-6eb9-440d-9970-dabc5b2c0309) 等。
 
