@@ -24,7 +24,7 @@ class Config(object):
 
     @classmethod
     def sentry_config(cls) -> dict:
-        config = cls.conf["sentry"]
+        config = cls.conf.get("sentry", {})
         config["environment"] = cls.run_mode
         return config
 
@@ -34,15 +34,19 @@ class Config(object):
 
     @classmethod
     def wechat(cls) -> tuple:
-        return "wechat", cls.conf["wechat"]["account"], cls.conf["wechat"]["token"]
+        return (
+            "wechat",
+            cls.conf.get("wechat", {}).get("account", ""),
+            cls.conf.get("wechat", {}).get("token", ""),
+        )
 
     @classmethod
     def toutiao(cls) -> dict:
-        return make_cookie(cls.conf["toutiao"]["cookie"])
+        return make_cookie(cls.conf.get("toutiao", {}).get("cookie", ""))
 
     @classmethod
     def zhihu(cls) -> dict:
-        return make_cookie(cls.conf["zhihu"]["cookie"])
+        return make_cookie(cls.conf.get("zhihu", {}).get("cookie", ""))
 
 
 logger = init_log(Config.NAME)

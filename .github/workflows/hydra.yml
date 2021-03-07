@@ -9,49 +9,34 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-#    strategy:
-#      matrix:
-#        python-version: [3.9.1]
-#    services:
-#      mysql:
-#        image: mysql:5.7
-#        env:
-#          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-#          MYSQL_DATABASE: hellogithub
-#        ports:
-#          - 3306
-#        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    strategy:
+      matrix:
+        python-version: [3.9.1]
     steps:
-      - uses: actions/checkout@v2
-      - uses: finnp/create-file-action@master
-        env:
-          FILE_NAME: "fileName.txt"
-          FILE_DATA: ${{ secrets.LOCAL_ENV }}
-      - name: Read package.json
-        id: package
-        uses: juliangruber/read-file-action@v1
+      - uses: mirromutth/mysql-action@v1.1
         with:
-          path: fileName.txt
-      - name: Echo local_env.yaml
-        run: echo ${{ steps.package.outputs.content }}
-
-#    - uses: actions/checkout@v2
-#    - name: Set up Python ${{ matrix.python-version }}
-#      uses: actions/setup-python@v2
-#      with:
-#        python-version: ${{ matrix.python-version }}
-#
-#    - run: 'echo "$LOCAL_ENV" > .local_env.yaml'
-#      shell: bash
-#      env:
-#        LOCAL_ENV: ${{ secrets.LOCAL_ENV }}
-#    - name: Install dependencies
-#      run: |
-#        pip install poetry==1.1.4 && poetry config virtualenvs.create false --local
-#        poetry install --no-root
-#    - name: update coverage
-#      env:
-#        CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
-#      run: |
-#        pytest --cov=hydra --cov-report=xml hydra/tests --cov-fail-under=95
-#        python-codacy-coverage -r coverage.xml
+          character set server: 'utf8' # Optional, default value is 'utf8mb4'. The '--character-set-server' option for mysqld
+          collation server: 'utf8_general_ci' # Optional, default value is 'utf8mb4_general_ci'. The '--collation-server' option for mysqld
+          mysql version: '8.0' # Optional, default value is "latest". The version of the MySQL
+          mysql database: 'hellogithub' # Optional, default value is "test". The specified database which will be create
+          mysql root password: 123456 # Required if "mysql user" is empty, default is empty. The root superuser password
+      - uses: actions/checkout@v2
+      - name: Create env file
+        run: |
+          touch .local_env.yaml
+          echo "${{ secrets.LOCAL_ENV }}" > .local_env.yaml
+          cat .local_env.yaml
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          pip install poetry==1.1.4 && poetry config virtualenvs.create false --local
+          poetry install --no-root
+      - name: update coverage
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+        run: |
+          pytest --cov=hydra --cov-report=xml hydra/tests --cov-fail-under=95
+          python-codacy-coverage -r coverage.xml
