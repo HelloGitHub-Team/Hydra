@@ -1,5 +1,7 @@
 # Hydra（九头蛇）
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/87d8fe061ee54525ab6f0f00dc3e5f54)](https://app.codacy.com/gh/HelloGitHub-Team/Hydra?utm_source=github.com&utm_medium=referral&utm_content=HelloGitHub-Team/Hydra&utm_campaign=Badge_Grade_Settings)
+
 <p align="center">
   <img width="75%" src="https://cdn.jsdelivr.net/gh/HelloGitHub-Team/Hydra@main/doc/cover.png"/>
   <br><strong>简单绝不简陋的 Python3 爬虫项目。</strong>
