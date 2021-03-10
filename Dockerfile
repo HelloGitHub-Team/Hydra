@@ -10,4 +10,4 @@ RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /
 RUN pip install poetry==1.1.4 && poetry config virtualenvs.create false --local
 RUN poetry install --no-root --no-dev
 
-CMD [ "python", "./run.py" ]
+CMD [ "python", "-u", "run.py" ]
