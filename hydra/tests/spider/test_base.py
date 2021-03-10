@@ -14,7 +14,7 @@ from hydra.spider.base import BaseSpider
 def test_base(requests_mock: Any) -> None:
     requests_mock.get("https://test.com", status_code=500)
     bs = BaseSpider()
-    assert bs.today == datetime.date.today()
+    assert bs.get_date == datetime.date.today().strftime("%Y-%m-%d")
     bs.request_data(url="https://test.com", auth={})
     bs.start()
     bs.request_data(url="test.com", auth={})

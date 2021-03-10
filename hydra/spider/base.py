@@ -23,16 +23,18 @@ class BaseSpider(object):
         self.name = self.__class__.__name__
         self.log = logger
         self.token_header: Dict[str, str] = dict()
-        self.get_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.get_date = datetime.datetime.now().strftime("%Y-%m-%d")
         self.session = requests.Session()
         self.session.mount("https://", HTTPAdapter(max_retries=1))
         self.content_result: List[Dict[str, Any]] = []
         self.account_result: Dict[str, Any] = {}
 
     @property
-    def today(self) -> datetime.date:
-        return datetime.date.today()
+    def get_time(self) -> str:
+        return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    @property
+    def get_date(self) -> str:
+        return datetime.datetime.now().strftime("%Y-%m-%d")
 
     @staticmethod
     def random_agent() -> str:
