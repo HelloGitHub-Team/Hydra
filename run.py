@@ -16,15 +16,12 @@ from hydra.config import Config, logger
 sentry_config = Config.sentry_config()
 sentry_sdk.init(**sentry_config)
 
-SPIDER_MAP = {
-    "wechat": WeChat(), "cnblogs": Cnblogs(), "toutiao": Toutiao(),
-    "csdn": Csdn(), "zhihu": Zhihu(), "juejin": Juejin(), "jike": Jike()
-}
+SPIDER_LIST = [WeChat, Cnblogs, Toutiao, Csdn, Zhihu, Juejin, Jike]
 
 
 def job():
-    for spider in SPIDER_MAP.values():
-        spider.start()
+    for spider in SPIDER_LIST:
+        spider().start()
 
 
 schedule.every().day.at("06:30").do(job)
