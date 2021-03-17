@@ -13,11 +13,6 @@ from hydra.db.curd import insert_account, upinsert_content
 from hydra.spider.base import BaseSpider
 
 
-"""
-https://www.cnblogs.com/xueweihan/
-"""
-
-
 class Cnblogs(BaseSpider):
     def __init__(self) -> None:
         super(Cnblogs, self).__init__()

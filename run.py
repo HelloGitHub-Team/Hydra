@@ -24,10 +24,7 @@ def job():
         spider().start()
 
 
-schedule.every().day.at("06:30").do(job)
-schedule.every().day.at("11:30").do(job)
-schedule.every().day.at("18:30").do(job)
-schedule.every().day.at("21:00").do(job)
+schedule.every(4).hours.do(job)
 
 logger.info("Start running job...")
 try:

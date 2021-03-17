@@ -100,7 +100,7 @@ class WeChat(BaseSpider):
             "fans": fans,
             "value": int(float(rank.get("log1p_mark", -1))),
             "rank": rank.get("rank_position", -1),
-            "update_date": rank.get("rank_date", None),
+            "update_date": self.get_date,
             "get_time": self.get_time,
         }
         self.log.info(f"Download {self.platform} account data finish.")

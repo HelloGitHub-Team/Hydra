@@ -13,11 +13,6 @@ from hydra.db.curd import insert_account, upinsert_content
 from hydra.spider.base import BaseSpider
 
 
-"""
-url: https://api.juejin.cn/content_api/v1/article/query_list
-"""
-
-
 class Juejin(BaseSpider):
     def __init__(self) -> None:
         super(Juejin, self).__init__()

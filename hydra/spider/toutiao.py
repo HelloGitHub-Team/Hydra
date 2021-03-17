@@ -13,11 +13,6 @@ from hydra.db.curd import insert_account, upinsert_content
 from hydra.spider.base import BaseSpider
 
 
-"""
-https://www.toutiao.com/c/user/61302299383/
-"""
-
-
 class Toutiao(BaseSpider):
     def __init__(self) -> None:
         super(Toutiao, self).__init__()

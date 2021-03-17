@@ -10,8 +10,8 @@ import argparse
 from hydra.spider import *
 
 SPIDER_MAP = {
-    "wechat": WeChat(), "cnblogs": Cnblogs(), "toutiao": Toutiao(),
-    "csdn": Csdn(), "zhihu": Zhihu(), "juejin": Juejin(), "jike": Jike()
+    "wechat": WeChat, "cnblogs": Cnblogs, "toutiao": Toutiao,
+    "csdn": Csdn, "zhihu": Zhihu, "juejin": Juejin, "jike": Jike
 }
 
 
@@ -26,9 +26,9 @@ if __name__ == "__main__":
 
     spider = SPIDER_MAP.get(name)
     if spider:
-        spider.start()
+        spider().start()
     elif name == "all":
         for fi_spider in SPIDER_MAP.values():
-            fi_spider.start()
+            fi_spider().start()
     else:
         print("spider name error.")

@@ -15,8 +15,6 @@ from requests.adapters import HTTPAdapter
 
 from hydra.config import logger
 
-# requests.packages.urllib3.disable_warnings()
-
 
 class BaseSpider(object):
     def __init__(self) -> None:
