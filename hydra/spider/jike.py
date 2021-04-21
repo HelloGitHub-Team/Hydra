@@ -54,10 +54,11 @@ class Jike(BaseSpider):
             return
         html = HTML(html=rs.text)
         fans = int(
-            html.xpath(
-                '//div[@class="sc-bdfBwQ sc-gsTCUz ' 'bedXUN bhdLno"]/a[2]/span'
-            )[0].text.strip()
+            html.xpath('//div[@class="sc-bdfBwQ sc-gsTCUz bedXUN bhdLno"]/div[2]/span')[
+                0
+            ].text.strip()
         )
+
         self.account_result = {
             "platform": self.platform,
             "fans": fans,
